@@ -231,3 +231,18 @@ EmployeeProfile::EmployeeProfile(
 {
 }
 
+string EmployeeProfile::getId()
+{
+    return id;
+}
+
+int EmployeeProfile::getAge()
+{
+    return age;
+}
+
+string EmployeeProfile::getHireDate()
+{
+    return hireDate;
+}
+

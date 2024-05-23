@@ -37,7 +37,11 @@ public:
         string department
     );
 
+    string getId();
 
+    int getAge();
+
+    string getHireDate();
 
    // 查询所有职工档案信息
    //void displayAllProfile();

@@ -10,8 +10,10 @@
 #include <Windows.h>
 #include <iomanip>
 #include "Constant.h"
+#include <algorithm>
 
 using namespace std;
+
 bool login();
 void myRegister();
 void menu();
@@ -38,10 +40,10 @@ int main() {
 
 		char first;
 		while (1) {
-			
+
 			first = _getch();
 			if (first == '1') {
-				system("cls");
+				std::system("cls");
 				//cout << "  欢迎登录职工档案管理系统   " << endl;
 				//// 如果登录成功，进入主界面
 				//if (login()) {
@@ -52,7 +54,7 @@ int main() {
 				break;
 			}
 			else if (first == '2') {
-				system("cls");
+				std::system("cls");
 				cout << "  欢迎注册职工档案管理系统   " << endl;
 				myRegister();
 				break;
@@ -64,7 +66,7 @@ int main() {
 			else {
 				cout << "请按1或2键（按ESC键可退出系统）" << endl;
 			}
-			
+
 
 		}
 
@@ -88,7 +90,7 @@ bool login() {
 		cin >> password;
 		User user(name, password);
 		if (user.isPasswordValid(filename)) {
-			system("cls");
+			std::system("cls");
 			cout << "登陆成功" << endl;
 			return true;
 		}
@@ -131,7 +133,7 @@ void myRegister() {
 		}
 	}
 	User user(name, password);
-	system("cls");
+	std::system("cls");
 	// 保存用户信息
 	user.saveUserToFile(filename);
 
@@ -165,24 +167,30 @@ void menu() {
 		i = _getch();
 		switch (i)
 		{
+		case 27:
+			std::system("cls");
+			// TODO 加一个确认选项
+			main();
+			break;
 		case '1':
-			system("cls");
+			std::system("cls");
 			displayAllProfile();
 			break;
 		case '2':
-			system("cls");
+			std::system("cls");
 
 			insertEmployeeProfile();
 			break;
 		case '3':
-			system("cls");
+			std::system("cls");
 			updateEmployeeProfile();
 			break;
 		case '4':
-			system("cls");
+			std::system("cls");
 			deleteEmployeeProfile();
 			break;
 		default:
+		std:system("cls");
 			cout << "请输入正确的数字！" << endl;
 			break;
 		}
@@ -192,19 +200,79 @@ void menu() {
 }
 
 void displayAllProfile() {
-	string filename = EMPLOYEE_FILENAME;
-	vector<EmployeeProfile> employeeProfiles = loadEmployeeProfiles(filename);
-	// 输出表头
-	tableTitle();
-	// 输出每一个数据
-	for (EmployeeProfile& employeeProfile : employeeProfiles) {
-		cout << employeeProfile << endl;
+	vector<EmployeeProfile> employeeProfiles = loadEmployeeProfiles(EMPLOYEE_FILENAME);
+
+	//cout << "1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序 5.按入职时间升序 6.按入职时间降序 其余按键默认查询";
+
+	bool flag = true;
+	// 对数据进行处理
+	//char i;
+	//i = _getch();
+	while (flag) {
+
+		cout << "\t\t\t1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
+			"5.按入职时间升序 6.按入职时间降序 ESC键退出 其余按键重复当前查询" << endl << endl;
+		// 输出表头
+		tableTitle();
+
+
+		// 输出每一个数据
+		for (EmployeeProfile& employeeProfile : employeeProfiles) {
+			cout << employeeProfile << endl;
+		}
+
+		// 等待用户按下任意按键
+		//std::system("pause");
+		int i = _getch();
+		std::system("cls");
+
+		switch (i) {
+		case '1':
+			std::system("cls");
+			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				return a.getId() < b.getId();
+				});
+			break;
+		case '2':
+			std::system("cls");
+			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				return a.getId() > b.getId();
+				});
+			break;
+		case '3':
+			std::system("cls");
+			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				return a.getAge() < b.getAge();
+				});
+			break;
+		case '4':
+			std::system("cls");
+			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				return a.getAge() > b.getAge();
+				});
+			break;
+		case '5':
+			std::system("cls");
+			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				return a.getHireDate() < b.getHireDate();
+				});
+			break;
+		case '6':
+			std::system("cls");
+			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				return a.getHireDate() > b.getHireDate();
+				});
+			break;
+		case 27:
+			std::system("cls");
+			flag = false;
+			break;
+		default:
+			std::system("cls");
+			cout << "请输入正确的数字！" << endl;
+		}
+
 	}
-
-	// 等待用户按下任意按键
-	system("pause");
-	system("cls");
-
 }
 void insertEmployeeProfile() {
 	EmployeeProfile e;
@@ -218,15 +286,19 @@ void updateEmployeeProfile() {
 // 删除员工
 void deleteEmployeeProfile() {
 	while (1) {
-		cout << "1.通过工号删除 2.通过身份证号删除" << endl;
+		cout << "1.通过工号删除 2.通过身份证号删除 ESC键退出" << endl;
 		char i = _getch();
 		if (i == '1') {
-			system("cls");
+			std::system("cls");
 			deleteEmployeeProfileById(EMPLOYEE_FILENAME);
 		}
 		else if (i == '2') {
-			system("cls");
+			std::system("cls");
 			deleteEmployeeProfileByIdNumber(EMPLOYEE_FILENAME);
+		}
+		else if (i == 27) {
+			std::system("cls");
+			break;
 		}
 		else {
 			cout << "请按1或2键" << endl;
@@ -297,7 +369,7 @@ void tableTitle() {
 	const int LINE_LENGTH = 155; // 分割线长度
 
 	// 输出表头
-	cout << left 
+	cout << left
 		<< setw(MIDDLE_WIDTH) << "工号:"
 		<< setw(SHORT_WIDTH) << "职工姓名:"
 		<< setw(LONG_WIDTH) << "身份证号:"
