@@ -9,6 +9,7 @@
 #include <sstream>
 #include <Windows.h>
 #include <iomanip>
+#include "Constant.h"
 
 using namespace std;
 bool login();
@@ -18,6 +19,8 @@ void displayAllProfile();
 void insertEmployeeProfile();
 void updateEmployeeProfile();
 void deleteEmployeeProfile();
+void deleteEmployeeProfileById(string filename);
+void deleteEmployeeProfileByIdNumber(string filename);
 vector<EmployeeProfile> loadEmployeeProfiles(const string& filename);
 EmployeeProfile createProfileFromLine(const std::string& line);
 void tableTitle();
@@ -71,7 +74,7 @@ int main() {
 }
 bool login() {
 	string name, password;
-	string filename = "user.txt";
+	string filename = USER_FILENAME;
 	while (1) {
 		cout << "请输入用户名：";
 		cin >> name;
@@ -99,7 +102,7 @@ bool login() {
 }
 void myRegister() {
 	string name, password, confirmPassword;
-	string filename = "user.txt";
+	string filename = USER_FILENAME;
 	while (1) {
 		cout << "请输入用户名：";
 		cin >> name;
@@ -156,6 +159,8 @@ void menu() {
 		//insert(e);
 		//cin >> e;
 
+		string filename = EMPLOYEE_FILENAME;
+
 		char i;
 		i = _getch();
 		switch (i)
@@ -187,7 +192,7 @@ void menu() {
 }
 
 void displayAllProfile() {
-	string filename = "employee.txt";
+	string filename = EMPLOYEE_FILENAME;
 	vector<EmployeeProfile> employeeProfiles = loadEmployeeProfiles(filename);
 	// 输出表头
 	tableTitle();
@@ -202,21 +207,41 @@ void displayAllProfile() {
 
 }
 void insertEmployeeProfile() {
-
-
-
 	EmployeeProfile e;
 	cin >> e;
-	string filename = "employee.txt";
-	e.saveEmployeeToFile(filename);
-
-
+	e.saveEmployeeToFile(EMPLOYEE_FILENAME);
 }
 void updateEmployeeProfile() {
 	cout << "updateEmployeeProfile" << endl;
 }
+
+// 删除员工
 void deleteEmployeeProfile() {
-	cout << "deleteEmployeeProfile" << endl;
+	while (1) {
+		cout << "1.通过工号删除 2.通过身份证号删除" << endl;
+		char i = _getch();
+		if (i == '1') {
+			system("cls");
+			deleteEmployeeProfileById(EMPLOYEE_FILENAME);
+		}
+		else if (i == '2') {
+			system("cls");
+			deleteEmployeeProfileByIdNumber(EMPLOYEE_FILENAME);
+		}
+		else {
+			cout << "请按1或2键" << endl;
+		}
+	}
+}
+
+// 通过工号删除
+void deleteEmployeeProfileById(string filename) {
+	EmployeeProfile::deleteProfileById(filename);
+}
+
+// 通过身份证号删除
+void deleteEmployeeProfileByIdNumber(string filename) {
+	EmployeeProfile::deleteProfileByIdNumber(filename);
 }
 
 // 从文件中获取每一行的内容，并构建成一个EmployeeProfile对象数组
@@ -243,9 +268,10 @@ vector<EmployeeProfile> loadEmployeeProfiles(const string& filename) {
 EmployeeProfile createProfileFromLine(const std::string& line) {
 	istringstream iss(line);
 	// 定义 EmployeeProfile 包含的成员变量
-	string name, idNumber, gender, ageStr, phoneNumber, address, education, position, hireDate, department;
+	string id, name, idNumber, gender, ageStr, phoneNumber, address, education, position, hireDate, department;
 	int age;
 	// 每行中的每个数据以逗号分隔，解析字符串
+	getline(iss, id, ',');
 	getline(iss, name, ',');
 	getline(iss, idNumber, ',');
 	getline(iss, gender, ',');
@@ -260,25 +286,29 @@ EmployeeProfile createProfileFromLine(const std::string& line) {
 	// 将字符串ageStr转化为int类型
 	age = stoi(ageStr);
 	// 创建 EmployeeProfile 对象
-	return EmployeeProfile(name, idNumber, gender, age, phoneNumber, address, education, position, hireDate, department);
+	return EmployeeProfile(id, name, idNumber, gender, age, phoneNumber, address, education, position, hireDate, department);
 }
 
-// 表头
+// 打印表头
 void tableTitle() {
 	const int SHORT_WIDTH = 10; // 短列宽
 	const int MIDDLE_WIDTH = 15; // 中列宽
 	const int LONG_WIDTH = 20; // 长列宽
+	const int LINE_LENGTH = 155; // 分割线长度
 
 	// 输出表头
-	cout << left << setw(SHORT_WIDTH) << "职工姓名:"
+	cout << left 
+		<< setw(MIDDLE_WIDTH) << "工号:"
+		<< setw(SHORT_WIDTH) << "职工姓名:"
 		<< setw(LONG_WIDTH) << "身份证号:"
 		<< setw(SHORT_WIDTH) << "性别:"
 		<< setw(SHORT_WIDTH) << "年龄:"
 		<< setw(MIDDLE_WIDTH) << "联系电话:"
-		<< setw(30) << "家庭地址:"
+		<< setw(25) << "家庭地址:"
 		<< setw(SHORT_WIDTH) << "学历:"
 		<< setw(MIDDLE_WIDTH) << "职位:"
 		<< setw(MIDDLE_WIDTH) << "入职日期:"
 		<< setw(SHORT_WIDTH) << "所属部门:"
 		<< endl;
+	cout << string(LINE_LENGTH, '-') << endl;
 }

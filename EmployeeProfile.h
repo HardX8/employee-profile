@@ -7,6 +7,7 @@ class EmployeeProfile
 {
 private:
     // 成员变量
+    string id;              // 工号
     string name;            // 姓名
     string idNumber;        // 身份证号
     string gender;          // 性别
@@ -17,10 +18,13 @@ private:
     string position;        // 职位
     string hireDate;        // 入职日期
     string department;      // 所属部门
+    // 通过第i项内容删除
+    static void deleteProfileByI(const string& filename, int i);
 public:
     EmployeeProfile() = default;
     // 构造函数
     EmployeeProfile(
+        string id,
         string name,
         string idNumber,
         string gender,
@@ -35,16 +39,17 @@ public:
 
 
 
-    // ... 可以继续添加setter和getter等成员函数
-    
    // 查询所有职工档案信息
    //void displayAllProfile();
 
     // 新增
     void insertProfile();
 
+    // 通过工号删除
+    static void deleteProfileById(const string& filename);
+
     // 通过身份证号删除
-    void deleteProfileByIdNumber(string idNumer);
+    static void deleteProfileByIdNumber(const string& filenamef);
 
     // 修改信息
     void updateProfile();
