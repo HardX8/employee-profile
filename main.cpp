@@ -11,6 +11,7 @@
 #include <iomanip>
 #include "Constant.h"
 #include <algorithm>
+#include <cctype>
 
 using namespace std;
 
@@ -191,7 +192,7 @@ void menu() {
 			break;
 		default:
 		std:system("cls");
-			cout << "请输入正确的数字！" << endl;
+			cout << KEY_ERROR << endl;
 			break;
 		}
 	}
@@ -199,6 +200,7 @@ void menu() {
 
 }
 
+// 显示所有职工信息，并提供排序功能
 void displayAllProfile() {
 	vector<EmployeeProfile> employeeProfiles = loadEmployeeProfiles(EMPLOYEE_FILENAME);
 
@@ -211,15 +213,21 @@ void displayAllProfile() {
 	while (flag) {
 
 		cout << "\t\t\t1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
-			"5.按入职时间升序 6.按入职时间降序 ESC键退出 其余按键重复当前查询" << endl << endl;
+			"5.按入职时间升序 6.按入职时间降序 7.前往页码 ESC键退出 其余按键重复当前查询" << endl << endl;
 		// 输出表头
 		tableTitle();
 
+		int startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+		int endRow = startRow + pageSize * (pageNum > 0 ? 1 : 0);
+		int total = employeeProfiles.size();
+		int sumNum = total / pageSize + 1;
 
 		// 输出每一个数据
-		for (EmployeeProfile& employeeProfile : employeeProfiles) {
-			cout << employeeProfile << endl;
+		for (int i = startRow; i < endRow && i < total; i++) {
+			cout << employeeProfiles[i] << endl;
 		}
+		cout << "当前页：" << pageNum << "/" << sumNum << endl
+			<< "总共：" << total;
 
 		// 等待用户按下任意按键
 		//std::system("pause");
@@ -263,22 +271,64 @@ void displayAllProfile() {
 				return a.getHireDate() > b.getHireDate();
 				});
 			break;
-		case 27:
+		case '7': {
+			cout << "请输入页码：";
+			string inputStr;
+
+			cin >> inputStr;
+			try {
+				int input = stoi(inputStr);
+				if (input < 0) {
+					pageNum = 1;
+				}
+				else if (input > sumNum) {
+					pageNum = sumNum;
+				}
+				else {
+					pageNum = input;
+				}
+			}
+			catch (const invalid_argument& e) {
+				// 捕获输入不是数字的异常
+				cerr << "请输入数字！" << endl;
+			}
+			catch (const out_of_range& e) { // 转换后的数字超出int范围
+				cerr << "数字太大，超出了允许的范围！" << endl;
+			}
+			break;
+		}
+		case 27: // ESC键
 			std::system("cls");
 			flag = false;
 			break;
+		case 77: // 右键
+			std::system("cls");
+			if (pageNum <= total / pageSize) {
+				pageNum++;
+			}
+			break;
+		case 75: // 左键
+			std::system("cls");
+			if (pageNum > 1) {
+				pageNum--;
+			}
+			break;
 		default:
 			std::system("cls");
-			cout << "请输入正确的数字！" << endl;
+			cout << KEY_ERROR << endl;
 		}
 
 	}
 }
+
+// 新增职工
 void insertEmployeeProfile() {
 	EmployeeProfile e;
 	cin >> e;
 	e.saveEmployeeToFile(EMPLOYEE_FILENAME);
 }
+
+// 修改职工信息
 void updateEmployeeProfile() {
 	cout << "updateEmployeeProfile" << endl;
 }
