@@ -38,16 +38,19 @@ public:
     );
 
     string getId();
-
+    string getName();
+    string getIdNumber();
+    string getGender();
     int getAge();
-
+    string getPhoneNumber();
+    string getAddress();
+    string getEducation();
+    string getPosition();
     string getHireDate();
+    string getDepartment();
 
-   // 查询所有职工档案信息
-   //void displayAllProfile();
 
-    // 新增
-    void insertProfile();
+
 
     // 通过工号删除
     static void deleteProfileById(const string& filename);

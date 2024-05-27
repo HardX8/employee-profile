@@ -7,46 +7,6 @@
 
 using namespace std;
 
-//void EmployeeProfile::displayAllProfile()
-//{
-//    const int SHORT_WIDTH = 10; // 职工姓名列宽
-//    const int MIDDLE_WIDTH = 15; // 职工姓名列宽
-//    const int LONG_WIDTH = 20; // 其他信息列宽
-//
-//    // 输出表头
-//    cout << left << setw(SHORT_WIDTH) << "职工姓名:"
-//        << setw(LONG_WIDTH) << "身份证号:"
-//        << setw(SHORT_WIDTH) << "性别:"
-//        << setw(SHORT_WIDTH) << "年龄:"
-//        << setw(MIDDLE_WIDTH) << "联系电话:"
-//        << setw(30) << "家庭地址:"
-//        << setw(SHORT_WIDTH) << "学历:"
-//        << setw(MIDDLE_WIDTH) << "职位:"
-//        << setw(MIDDLE_WIDTH) << "入职日期:"
-//        << setw(SHORT_WIDTH) << "所属部门:"
-//        << endl;
-//
-//    // 分割线
-//    cout << string(SHORT_WIDTH + LONG_WIDTH * 7, '-') << endl;
-//
-//    // 输出数据行
-//    cout << left << setw(SHORT_WIDTH) << name
-//        << setw(LONG_WIDTH) << idNumber
-//        << setw(SHORT_WIDTH) << gender
-//        << setw(SHORT_WIDTH) << age
-//        << setw(MIDDLE_WIDTH) << phoneNumber
-//        << setw(30) << address
-//        << setw(SHORT_WIDTH) << education
-//        << setw(MIDDLE_WIDTH) << position
-//        << setw(MIDDLE_WIDTH) << hireDate
-//        << setw(SHORT_WIDTH) << department
-//        << endl;
-//}
-
-void EmployeeProfile::insertProfile()
-{
-
-}
 
 // 通过第i个属性删除职工
 void EmployeeProfile::deleteProfileByI(const string& filename, int i)
@@ -117,7 +77,6 @@ void EmployeeProfile::deleteProfileById(const string& filename)
     cout << "请输入工号：";
     deleteProfileByI(filename, 1);
 }
-
 
 void EmployeeProfile::deleteProfileByIdNumber(const string& filename)
 {
@@ -236,13 +195,53 @@ string EmployeeProfile::getId()
     return id;
 }
 
+string EmployeeProfile::getName()
+{
+    return name;
+}
+
+string EmployeeProfile::getIdNumber()
+{
+    return idNumber;
+}
+
+string EmployeeProfile::getGender()
+{
+    return gender;
+}
+
 int EmployeeProfile::getAge()
 {
     return age;
 }
 
+string EmployeeProfile::getPhoneNumber()
+{
+    return phoneNumber;
+}
+
+string EmployeeProfile::getAddress()
+{
+    return address;
+}
+
+string EmployeeProfile::getEducation()
+{
+    return education;
+}
+
+string EmployeeProfile::getPosition()
+{
+    return position;
+}
+
 string EmployeeProfile::getHireDate()
 {
     return hireDate;
+}
+
+string EmployeeProfile::getDepartment()
+{
+    return department;
 }
 

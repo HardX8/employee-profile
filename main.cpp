@@ -12,6 +12,7 @@
 #include "Constant.h"
 #include <algorithm>
 #include <cctype>
+#include <regex>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ void updateEmployeeProfile();
 void deleteEmployeeProfile();
 void deleteEmployeeProfileById(string filename);
 void deleteEmployeeProfileByIdNumber(string filename);
+void fuzzyQuery(vector<EmployeeProfile> employeeProfiles);
 vector<EmployeeProfile> loadEmployeeProfiles(const string& filename);
 EmployeeProfile createProfileFromLine(const std::string& line);
 void tableTitle();
@@ -213,7 +215,7 @@ void displayAllProfile() {
 	while (flag) {
 
 		cout << "\t\t\t1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
-			"5.按入职时间升序 6.按入职时间降序 7.前往页码 ESC键退出 其余按键重复当前查询" << endl << endl;
+			"5.按入职时间升序 6.按入职时间降序 7.前往页码 8.模糊查询 ESC键退出" << endl << endl;
 		// 输出表头
 		tableTitle();
 
@@ -226,13 +228,10 @@ void displayAllProfile() {
 		for (int i = startRow; i < endRow && i < total; i++) {
 			cout << employeeProfiles[i] << endl;
 		}
-		cout << "当前页：" << pageNum << "/" << sumNum << endl
-			<< "总共：" << total;
+		cout << "\n当前页：" << pageNum << "/" << sumNum << "\t向左：A/←\t向右：D/→" << endl
+			<< "总职工数：" << total;
 
-		// 等待用户按下任意按键
-		//std::system("pause");
 		int i = _getch();
-		std::system("cls");
 
 		switch (i) {
 		case '1':
@@ -272,15 +271,19 @@ void displayAllProfile() {
 				});
 			break;
 		case '7': {
-			cout << "请输入页码：";
+			cout << "\n请输入页码：";
 			string inputStr;
-
 			cin >> inputStr;
+
+			std::system("cls");
 			try {
+				// 检测输入是否可以转成在范围内的数字
 				int input = stoi(inputStr);
-				if (input < 0) {
+				// 如果输入页码小于等于0则为第一页
+				if (input <= 0) {
 					pageNum = 1;
 				}
+				// 如果大于最大页码最为最后一页
 				else if (input > sumNum) {
 					pageNum = sumNum;
 				}
@@ -292,16 +295,28 @@ void displayAllProfile() {
 				// 捕获输入不是数字的异常
 				cerr << "请输入数字！" << endl;
 			}
-			catch (const out_of_range& e) { // 转换后的数字超出int范围
+			catch (const out_of_range& e) {
+				// 转换后的数字超出int范围
 				cerr << "数字太大，超出了允许的范围！" << endl;
 			}
 			break;
 		}
+		case '8':
+			fuzzyQuery(employeeProfiles);
+			_getch();
+			std::system("cls");
+			break;
 		case 27: // ESC键
 			std::system("cls");
 			flag = false;
 			break;
 		case 77: // 右键
+			std::system("cls");
+			if (pageNum <= total / pageSize) {
+				pageNum++;
+			}
+			break;
+		case 100: // D键
 			std::system("cls");
 			if (pageNum <= total / pageSize) {
 				pageNum++;
@@ -313,8 +328,15 @@ void displayAllProfile() {
 				pageNum--;
 			}
 			break;
+		case 97: // A键
+			std::system("cls");
+			if (pageNum > 1) {
+				pageNum--;
+			}
+			break;
 		default:
 			std::system("cls");
+			cout << i;
 			cout << KEY_ERROR << endl;
 		}
 
@@ -364,6 +386,43 @@ void deleteEmployeeProfileById(string filename) {
 // 通过身份证号删除
 void deleteEmployeeProfileByIdNumber(string filename) {
 	EmployeeProfile::deleteProfileByIdNumber(filename);
+}
+
+// 模糊查询
+void fuzzyQuery(vector<EmployeeProfile> employeeProfiles) {
+	string content;
+	// 记录查询结果数
+	int count = 0;
+	cout << "\n请输入查询的内容：";
+	cin >> content;
+	std::system("cls");
+	// 转义content中的特殊正则表达式字符
+	string escapedContent = regex_replace(content, regex(R"([\^$.|?*+()])"), R"(\$&)");
+	regex reg(escapedContent, regex_constants::icase);
+
+	// 输出表头
+	tableTitle();
+
+	// 逐一匹配
+	for (int i = 0; i < employeeProfiles.size(); i++) {
+		if (regex_search(employeeProfiles[i].getId(), reg) ||
+			regex_search(employeeProfiles[i].getName(), reg) ||
+			regex_search(employeeProfiles[i].getIdNumber(), reg) ||
+			regex_search(employeeProfiles[i].getGender(), reg) ||
+			regex_search(to_string(employeeProfiles[i].getAge()), reg) ||
+			regex_search(employeeProfiles[i].getPhoneNumber(), reg) ||
+			regex_search(employeeProfiles[i].getAddress(), reg) ||
+			regex_search(employeeProfiles[i].getEducation(), reg) ||
+			regex_search(employeeProfiles[i].getPosition(), reg) ||
+			regex_search(employeeProfiles[i].getHireDate(), reg) ||
+			regex_search(employeeProfiles[i].getDepartment(), reg)) {
+			// 打印匹配到的员工信息
+			cout << employeeProfiles[i] << endl;
+			count++;
+		}
+	}
+
+	cout << "总职工数：" << count;
 }
 
 // 从文件中获取每一行的内容，并构建成一个EmployeeProfile对象数组
