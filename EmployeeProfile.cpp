@@ -4,6 +4,7 @@
 #include <fstream>
 #include <conio.h>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -50,8 +51,7 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
         else {
             // 找到了匹配的工号
             found = true;
-            // 此处在数据量不大的情况下可以不进行break，
-            // 可以清除新增职工时出错的重复数据
+            // 此处进行break的话会导致要删除职工后面的职工没有写入新文件
         }
     }
 
@@ -84,10 +84,6 @@ void EmployeeProfile::deleteProfileByIdNumber(const string& filename)
     deleteProfileByI(filename, 3);
 }
 
-void EmployeeProfile::updateProfile()
-{
-}
-
 void EmployeeProfile::saveEmployeeToFile(const string& filename)
 {
     std::ofstream outFile(filename, std::ios_base::app);
@@ -102,6 +98,123 @@ void EmployeeProfile::saveEmployeeToFile(const string& filename)
         "," << position << "," << hireDate << "," << department << std::endl;
     outFile.close();
     std::cout << "职工数据已保存至: " << filename << std::endl;
+}
+
+void EmployeeProfile::updateProfileByI(const string& filename, int i)
+{
+    string id;
+    cin >> id;
+    ifstream inFile(filename);
+    if (!inFile.is_open()) {
+        cerr << "无法打开文件！" << endl;
+        return;
+    }
+
+    // 创建临时文件来保存修改后的数据
+    string tempFilename = "temp_" + filename;
+    ofstream outFile(tempFilename);
+    if (!outFile.is_open()) {
+        cerr << "无法创建临时文件！" << endl;
+        inFile.close();
+        return;
+    }
+
+    string line;
+    // 标记是否找到并修改了指定的记录
+    bool found = false;
+
+    while (getline(inFile, line)) {
+        istringstream iss(line);
+        string currentId;
+
+        // 读取每行的第i个字段（工号）
+        int tempI = i;
+        while (tempI--) {
+            getline(iss, currentId, ',');
+        }
+
+
+        if (currentId != id) {
+            // 如果当前行的属性不是要修改的属性，则写入临时文件
+            outFile << line << endl;
+        }
+        else {
+            // 找到了匹配的工号
+            found = true;
+            // 此处进行break的话会导致要删除职工后面的职工没有写入新文件
+            
+            // 使用vector来动态存储分割后的字符串
+            vector<string> employeeVector;
+            stringstream ss(line);
+            string item;
+
+            // 使用getline按逗号分割字符串，直到读取完所有元素
+            while (getline(ss, item, ',')) {
+                // 将分割得到的元素添加到vector中
+                employeeVector.push_back(item);
+            }
+
+            string newE;
+            for (int j = 0; j < employeeVector.size(); j++) {
+                if (j == 0) {
+                    cout << "按回车键则保留旧数据\n\n旧值：" << employeeVector[0] << endl << "不可修改" << endl << endl;
+                    j++;
+                    // 清除输入缓冲区
+                    cin.ignore();
+                }
+                cout << "旧值：" << employeeVector[j] << endl << "新值：";
+                // 读取用户输入的字符
+                char input = cin.get(); 
+                // 如果不是回车键
+                if (input != '\n') { 
+                    // 将读取的字符放回输入流
+                    cin.unget(); 
+                    // 进行输入操作
+                    cin >> newE; 
+                    employeeVector[j] = newE;
+                    // 清除输入缓冲区
+                    cin.ignore();
+                    cout << endl;
+                }
+                else {
+                    cout << endl;
+                }
+            }
+            string newLine = "";
+            for (int j = 0; j < employeeVector.size(); j++) {
+                newLine += employeeVector[j] + ",";
+            }
+            outFile << newLine << endl;
+        }
+    }
+
+    inFile.close();
+    outFile.close();
+
+    if (found) {
+        // 如果找到了匹配的属性，删除原文件
+        remove(filename.c_str());
+        // 将临时文件重命名为原文件名
+        rename(tempFilename.c_str(), filename.c_str());
+        cout << "工号为 " << id << " 的员工记录已成功修改。" << endl;
+    }
+    else {
+        // 如果没找到匹配项，删除临时文件
+        remove(tempFilename.c_str());
+        cout << "未找到工号为 " << id << " 的员工记录。" << endl;
+    }
+}
+
+void EmployeeProfile::updateProfileById(const string& filename)
+{
+    cout << "请输入工号：";
+    updateProfileByI(filename, 1);
+}
+
+void EmployeeProfile::updateProfileByIdNumber(const string& filename)
+{
+    cout << "请输入身份证号：";
+    updateProfileByI(filename, 3);
 }
 
 istream& operator>>(istream& in, EmployeeProfile& profile) {

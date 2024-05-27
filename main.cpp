@@ -1,4 +1,3 @@
-//#include <easyx.h>
 #include <string>
 #include "EmployeeProfile.h"
 #include <iostream>
@@ -21,7 +20,9 @@ void myRegister();
 void menu();
 void displayAllProfile();
 void insertEmployeeProfile();
-void updateEmployeeProfile();
+void updateEmployeeProfile(string filename);
+void updateEmployeeProfileById(string filename);
+void updateEmployeeProfileByIdNumber(string filename);
 void deleteEmployeeProfile();
 void deleteEmployeeProfileById(string filename);
 void deleteEmployeeProfileByIdNumber(string filename);
@@ -29,6 +30,7 @@ void fuzzyQuery(vector<EmployeeProfile> employeeProfiles);
 vector<EmployeeProfile> loadEmployeeProfiles(const string& filename);
 EmployeeProfile createProfileFromLine(const std::string& line);
 void tableTitle();
+
 int main() {
 	while (1) {
 
@@ -43,17 +45,16 @@ int main() {
 
 		char first;
 		while (1) {
-
 			first = _getch();
 			if (first == '1') {
 				std::system("cls");
-				//cout << "  欢迎登录职工档案管理系统   " << endl;
-				//// 如果登录成功，进入主界面
-				//if (login()) {
-				//	menu();
-				//	return 0;// TODO 有待考虑
-				//}
-				menu(); return 0;// 此行代码便于调试，后期删除
+				cout << "  欢迎登录职工档案管理系统   " << endl;
+				// 如果登录成功，进入主界面
+				if (login()) {
+					menu();
+					return 0;// TODO 有待考虑
+				}
+				//menu(); return 0;// 此行代码便于调试，后期删除
 				break;
 			}
 			else if (first == '2') {
@@ -64,7 +65,8 @@ int main() {
 			}
 			else if (first == 27) {
 				cout << "退出成功！";
-				return 0;
+				// 用return 0 的话在meun()调用main()之后还会再执行meun()
+				exit(0);
 			}
 			else {
 				cout << "请按1或2键（按ESC键可退出系统）" << endl;
@@ -77,6 +79,7 @@ int main() {
 
 	return 0;
 }
+
 bool login() {
 	string name, password;
 	string filename = USER_FILENAME;
@@ -105,6 +108,7 @@ bool login() {
 
 
 }
+
 void myRegister() {
 	string name, password, confirmPassword;
 	string filename = USER_FILENAME;
@@ -142,6 +146,7 @@ void myRegister() {
 
 	cout << "注册成功" << endl;
 }
+
 void menu() {
 	while (1) {
 		cout << "     欢迎使用职工档案管理系统   " << endl;
@@ -158,12 +163,6 @@ void menu() {
 		cout << "|                                  |" << endl;
 		cout << "————————————————————————————————————" << endl;
 
-		//EmployeeProfile employee("张三", "330112199001010010", "男", 33, "13800138000", "杭州市西湖区XX街道123号", "本科", "软件工程师", "2015-03-01", "研发部");
-		//cout << employee;
-		//EmployeeProfile e;
-		//insert(e);
-		//cin >> e;
-
 		string filename = EMPLOYEE_FILENAME;
 
 		char i;
@@ -171,9 +170,12 @@ void menu() {
 		switch (i)
 		{
 		case 27:
+			cout << "是否退出" << endl << "1.确认2.取消";
+			if (_getch() == '1') {
+				std::system("cls");
+				main();
+			}
 			std::system("cls");
-			// TODO 加一个确认选项
-			main();
 			break;
 		case '1':
 			std::system("cls");
@@ -181,12 +183,11 @@ void menu() {
 			break;
 		case '2':
 			std::system("cls");
-
 			insertEmployeeProfile();
 			break;
 		case '3':
 			std::system("cls");
-			updateEmployeeProfile();
+			updateEmployeeProfile(filename);
 			break;
 		case '4':
 			std::system("cls");
@@ -202,16 +203,12 @@ void menu() {
 
 }
 
-// 显示所有职工信息，并提供排序功能
+// 显示所有职工信息，并提供排序、模糊查询等功能
 void displayAllProfile() {
 	vector<EmployeeProfile> employeeProfiles = loadEmployeeProfiles(EMPLOYEE_FILENAME);
 
-	//cout << "1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序 5.按入职时间升序 6.按入职时间降序 其余按键默认查询";
-
 	bool flag = true;
-	// 对数据进行处理
-	//char i;
-	//i = _getch();
+
 	while (flag) {
 
 		cout << "\t\t\t1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
@@ -351,8 +348,34 @@ void insertEmployeeProfile() {
 }
 
 // 修改职工信息
-void updateEmployeeProfile() {
-	cout << "updateEmployeeProfile" << endl;
+void updateEmployeeProfile(string filename) {
+	while (1) {
+		cout << "1.通过工号查询职工 2.通过身份证号查询职工 ESC键退出" << endl;
+		char i = _getch();
+		if (i == '1') {
+			std::system("cls");
+			updateEmployeeProfileById(EMPLOYEE_FILENAME);
+		}
+		else if (i == '2') {
+			std::system("cls");
+			updateEmployeeProfileByIdNumber(EMPLOYEE_FILENAME);
+		}
+		else if (i == 27) {
+			std::system("cls");
+			break;
+		}
+		else {
+			cout << "请按1或2键" << endl;
+		}
+	}
+}
+
+void updateEmployeeProfileById(string filename) {
+	EmployeeProfile::updateProfileById(filename);
+}
+
+void updateEmployeeProfileByIdNumber(string filename) {
+	EmployeeProfile::updateProfileByIdNumber(filename);
 }
 
 // 删除员工

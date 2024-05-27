@@ -58,9 +58,6 @@ public:
     // 通过身份证号删除
     static void deleteProfileByIdNumber(const string& filenamef);
 
-    // 修改信息
-    void updateProfile();
-
     // 重载 >> 运算符的声明
     friend istream& operator>>(istream& in, EmployeeProfile& profile);
 
@@ -69,6 +66,15 @@ public:
 
     // 将信息存入文件
     void saveEmployeeToFile(const string& filename);
+
+    // 更新职工信息
+    static void updateProfileByI(const string& filename, int i);
+
+    // 根据工号查询职工
+    static void updateProfileById(const string& filename);
+
+    // 根据身份证号查询职工
+    static void updateProfileByIdNumber(const string& filename);
 };
 
 
