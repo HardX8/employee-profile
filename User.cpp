@@ -7,9 +7,11 @@
 #include <vector>
 #include "MD5.h"
 #include <conio.h>
+#include <windows.h>
 
 using namespace std;
 
+// 通过第i项内容查询并更新
 void User::updateUserByI(const string& filename, const string& phone, int i)
 {
     ifstream inFile(filename);
@@ -221,22 +223,30 @@ string User::findPhoneAndSendVerificationCode(const string& phone, const string&
 {
     if (isPhoneExists(phone, filename)) {
         srand(time(0));
-        int verificationCode = rand() % 10000;  // 生成一个四位数的验证码
-        cout << "已向手机号 " << phone << " 发送验证码：" << verificationCode << endl;
+        // 生成一个四位数的验证码
+        int verificationCode = rand() % 9000 + 1000;
+        cout << "请稍等..." << endl;
+        Sleep(1000);
+        cout << "正在发送" << endl;
+        Sleep(1000);
+        cout << "已向手机号 " << phone << " 发送验证码：" << verificationCode << "\t(60秒有效)" << endl;
         return to_string(verificationCode);
     }
     else {
         cout << "该手机号未注册！" << endl;
     }
 
-    return "";  // 返回空字符串表示未找到对应用户
+    // 未找到对应用户
+    return "";  
 }
 
+// 根据手机号更新职工
 void User::updateUserByPhone(const string& filename, const string& phone)
 {
     updateUserByI(filename, phone, USER_PHONE_SERIAL_NUMBER);
 }
 
+// 输入密码
 string User::inputPassword() {
     char password[21]; // 20位密码加上字符串结束符
     int index = 0;

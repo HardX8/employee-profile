@@ -13,6 +13,7 @@
 #include <cctype>
 #include <regex>
 #include <functional>
+#include <chrono>
 
 using namespace std;
 
@@ -87,6 +88,7 @@ int main() {
 	return 0;
 }
 
+// 登录
 bool login() {
 	string name, password;
 	string filename = USER_FILENAME;
@@ -116,6 +118,7 @@ bool login() {
 
 }
 
+// 注册
 void myRegister() {
 	string name, password, confirmPassword, phone;
 	string filename = USER_FILENAME;
@@ -173,22 +176,41 @@ void myRegister() {
 	cout << "注册成功" << endl;
 }
 
+// 忘记密码
 void forgetPassword() {
 	string phone, code, VerificationCode;
+	chrono::high_resolution_clock::time_point startTime, enterCodeTime;
+
 	while (1) {
 		cout << "请输入手机号：";
 		cin >> phone;
 		if (!verifyPhone(phone)) {
 			continue;
 		}
+		sendVerificationCode:
 		VerificationCode = User::findPhoneAndSendVerificationCode(phone, USER_FILENAME);
+		// 记录开始时间
+		startTime = chrono::high_resolution_clock::now();
+
 		if (VerificationCode != "") {
 			break;
 		}
 	}
+	cout << "请输入验证码：";
 	while (1) {
-		cout << "请输入验证码：";
 		cin >> code;
+		// 记录结束时间
+		enterCodeTime = chrono::high_resolution_clock::now();
+
+		if (chrono::duration_cast<chrono::seconds>(enterCodeTime - startTime).count() > 60) {
+			cout << "超过60秒，操作超时" << endl << "按回车键重新发送" << endl;
+			int i = _getch();
+			if (i == 13) {
+				goto sendVerificationCode;
+			}
+			break;
+		}
+
 		if (VerificationCode == code) {
 			User::updateUserByPhone(USER_FILENAME, phone);
 			break;	
@@ -197,6 +219,7 @@ void forgetPassword() {
 	}
 }
 
+// 验证手机号是否正确
 bool verifyPhone(string phone) {
 	// 定义手机号正则表达式，这里简单匹配11位数字
 	regex phonePattern("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$");
@@ -207,6 +230,8 @@ bool verifyPhone(string phone) {
 		return false;
 	}
 }
+
+// 功能菜单
 void menu() {
 	while (1) {
 		cout << "     欢迎使用职工档案管理系统   " << endl;
@@ -268,21 +293,22 @@ void displayAllProfile() {
 
 	while (flag) {
 
-		cout << "\t\t\t1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
-			"5.按入职时间升序 6.按入职时间降序 7.前往页码 8.模糊查询 ESC键退出" << endl << endl;
+		cout << "\t\t1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
+			"5.按入职时间升序 6.按入职时间降序 7.前往页码 8.更改每页展示数 9.模糊查询 ESC键退出" << endl << endl;
 		// 输出表头
 		tableTitle();
 
 		int startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
 		int endRow = startRow + pageSize * (pageNum > 0 ? 1 : 0);
 		int total = employeeProfiles.size();
-		int sumNum = total / pageSize + 1;
+		int sumNum = static_cast<int>(ceil(static_cast<double>(total) / pageSize));
 
 		// 输出每一个数据
 		for (int i = startRow; i < endRow && i < total; i++) {
 			cout << employeeProfiles[i] << endl;
 		}
-		cout << "\n当前页：" << pageNum << "/" << sumNum << "\t向左：A/←\t向右：D/→" << endl
+		cout << "\n当前页：" << pageNum << "/" << sumNum << "\t" << pageSize << "/页" <<
+			"\t向左：A/←\t向右：D/→" << endl
 			<< "总职工数：" << total;
 
 		int i = _getch();
@@ -356,6 +382,13 @@ void displayAllProfile() {
 			break;
 		}
 		case '8':
+			cout << "\n请输入每页展示数：";
+			cin >> pageSize;
+			std::system("cls");
+			// 回到第一页
+			pageNum = 1;
+			break;
+		case '9':
 			fuzzyQuery(employeeProfiles);
 			std::system("pause");
 			std::system("cls");
@@ -366,13 +399,13 @@ void displayAllProfile() {
 			break;
 		case 77: // 右键
 			std::system("cls");
-			if (pageNum <= total / pageSize) {
+			if (pageNum < sumNum) {
 				pageNum++;
 			}
 			break;
 		case 100: // D键
 			std::system("cls");
-			if (pageNum <= total / pageSize) {
+			if (pageNum < sumNum) {
 				pageNum++;
 			}
 			break;
@@ -568,11 +601,11 @@ void tableTitle() {
 		<< setw(SHORT_WIDTH) << "性别:"
 		<< setw(SHORT_WIDTH) << "年龄:"
 		<< setw(MIDDLE_WIDTH) << "联系电话:"
-		<< setw(25) << "家庭地址:"
+		<< setw(LONG_WIDTH) << "家庭地址:"
 		<< setw(SHORT_WIDTH) << "学历:"
 		<< setw(MIDDLE_WIDTH) << "职位:"
 		<< setw(MIDDLE_WIDTH) << "入职日期:"
-		<< setw(SHORT_WIDTH) << "所属部门:"
+		<< setw(MIDDLE_WIDTH) << "所属部门:"
 		<< endl;
 	cout << string(LINE_LENGTH, '-') << endl;
 }

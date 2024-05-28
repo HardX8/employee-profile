@@ -341,11 +341,11 @@ ostream& operator<<(ostream& out, EmployeeProfile& profile)
         << setw(SHORT_WIDTH) << profile.gender
         << setw(SHORT_WIDTH) << profile.age
         << setw(MIDDLE_WIDTH) << profile.phoneNumber
-        << setw(25) << profile.address
+        << setw(LONG_WIDTH) << profile.address
         << setw(SHORT_WIDTH) << profile.education
         << setw(MIDDLE_WIDTH) << profile.position
         << setw(MIDDLE_WIDTH) << profile.hireDate
-        << setw(SHORT_WIDTH) << profile.department << endl;
+        << setw(MIDDLE_WIDTH) << profile.department << endl;
     out << string(LINE_LENGTH, '-');
     return out;
 }

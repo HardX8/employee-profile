@@ -30,6 +30,8 @@ public:
 	// 判断用户名和密码是否匹配
 	bool isPasswordValid(const string& filename);
 
+	// ---------------------------static---------------------------
+
 	// 判断是否存在该用户名
 	static bool isUsernameExists(const std::string& username, const std::string& filename);
 
