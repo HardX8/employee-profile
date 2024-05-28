@@ -5,6 +5,7 @@
 #include <conio.h>
 #include <sstream>
 #include <vector>
+#include "Constant.h"
 
 using namespace std;
 
@@ -37,7 +38,7 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
         istringstream iss(line);
         string currentId;
 
-        // 读取每行的第i个字段（工号）
+        // 读取每行的第i个字段
         int tempI = i;
         while (tempI--) {
             getline(iss, currentId, ',');
@@ -63,43 +64,66 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
         remove(filename.c_str());
         // 将临时文件重命名为原文件名
         rename(tempFilename.c_str(), filename.c_str());
-        cout << "工号为 " << id << " 的员工记录已成功删除。" << endl;
+        if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
+            cout << "工号为 " << id << " 的员工记录已成功删除。" << endl;
+        }
+        else {
+            cout << "身份证为 " << id << " 的员工记录已成功删除。" << endl;
+        }
     }
     else {
         // 如果没找到匹配项，删除临时文件
         remove(tempFilename.c_str());
-        cout << "未找到工号为 " << id << " 的员工记录。" << endl;
+        if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
+            cout << "未找到工号为 " << id << " 的员工记录。" << endl;
+        }
+        else {
+            cout << "未找到身份证号为 " << id << " 的员工记录。" << endl;
+        }
     }
 }
 
+// 通过工号删除
 void EmployeeProfile::deleteProfileById(const string& filename)
 {
     cout << "请输入工号：";
-    deleteProfileByI(filename, 1);
+    deleteProfileByI(filename, EMPLOYEE_ID_SERIAL_NUMBER);
 }
 
+// 通过身份证号删除
 void EmployeeProfile::deleteProfileByIdNumber(const string& filename)
 {
     cout << "请输入身份证号：";
-    deleteProfileByI(filename, 3);
+    deleteProfileByI(filename, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER);
 }
 
+// 将信息存入文件
 void EmployeeProfile::saveEmployeeToFile(const string& filename)
 {
-    std::ofstream outFile(filename, std::ios_base::app);
+    ofstream outFile(filename, ios_base::app);
     if (!outFile.is_open()) {
-        std::cerr << "无法打开文件: " << filename << std::endl;
+        cerr << "无法打开文件: " << filename << endl;
         return;
     }
 
-    // 简单地将用户名和密码写入文件，中间可以用特定分隔符分开，便于之后解析
+    // 在此再次判断，如果工号存在则不保存到文件中
+    if (EmployeeProfile::isPropertyExists(id, EMPLOYEE_FILENAME, EMPLOYEE_ID_SERIAL_NUMBER)) {
+        return;
+    }
+    // 在此再次判断，如果身份证号存在则不保存到文件中
+    if (EmployeeProfile::isPropertyExists(idNumber, EMPLOYEE_FILENAME, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER)) {
+        return;
+    }
+
+    // 将职工信息写入文件，中间用逗号分开，便于之后解析
     outFile << id << "," << name << "," << idNumber << "," << gender << "," << age << ","
         << phoneNumber << "," << address << "," << education <<
-        "," << position << "," << hireDate << "," << department << std::endl;
+        "," << position << "," << hireDate << "," << department << endl;
     outFile.close();
-    std::cout << "职工数据已保存至: " << filename << std::endl;
+    cout << "职工数据已保存至: " << filename << endl;
 }
 
+// 通过第i项内容查询并更新
 void EmployeeProfile::updateProfileByI(const string& filename, int i)
 {
     string id;
@@ -132,7 +156,6 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
         while (tempI--) {
             getline(iss, currentId, ',');
         }
-
 
         if (currentId != id) {
             // 如果当前行的属性不是要修改的属性，则写入临时文件
@@ -171,6 +194,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                     cin.unget(); 
                     // 进行输入操作
                     cin >> newE; 
+                    // 更新数据
                     employeeVector[j] = newE;
                     // 清除输入缓冲区
                     cin.ignore();
@@ -180,10 +204,12 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                     cout << endl;
                 }
             }
+            // 拼接新的职工信息
             string newLine = "";
             for (int j = 0; j < employeeVector.size(); j++) {
                 newLine += employeeVector[j] + ",";
             }
+            // 写入文件
             outFile << newLine << endl;
         }
     }
@@ -196,37 +222,90 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
         remove(filename.c_str());
         // 将临时文件重命名为原文件名
         rename(tempFilename.c_str(), filename.c_str());
-        cout << "工号为 " << id << " 的员工记录已成功修改。" << endl;
+        if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
+            cout << "工号为 " << id << " 的员工记录已成功修改。" << endl;
+        }
+        else {
+            cout << "身份证号为 " << id << " 的员工记录已成功修改。" << endl;
+        }
     }
     else {
         // 如果没找到匹配项，删除临时文件
         remove(tempFilename.c_str());
-        cout << "未找到工号为 " << id << " 的员工记录。" << endl;
+        if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
+            cout << "未找到工号为 " << id << " 的员工记录。" << endl;
+        }
+        else {
+            cout << "未找到身份证号为 " << id << " 的员工记录。" << endl;
+        }
     }
 }
 
+// 根据工号更新职工
 void EmployeeProfile::updateProfileById(const string& filename)
 {
     cout << "请输入工号：";
-    updateProfileByI(filename, 1);
+    updateProfileByI(filename, EMPLOYEE_ID_SERIAL_NUMBER);
 }
 
+// 根据身份证号更新职工
 void EmployeeProfile::updateProfileByIdNumber(const string& filename)
 {
     cout << "请输入身份证号：";
-    updateProfileByI(filename, 3);
+    updateProfileByI(filename, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER);
 }
 
+// 判断某个成员变量是否存在，i表示要查询的成员变量的序号
+bool EmployeeProfile::isPropertyExists(const string& property, const string& filename, const int i)
+{
+    ifstream inFile(filename);
+    if (!inFile.is_open()) {
+        cerr << "无法打开文件: " << filename << endl;
+        // 文件不存在或无法打开，视为用户名不存在
+        return false; 
+    }
+
+    string line;
+    while (getline(inFile, line)) {
+        istringstream iss(line);
+        string currentProperty;
+
+        // 读取每行的第i个字段（工号）
+        int tempI = i;
+        while (tempI--) {
+            getline(iss, currentProperty, ',');
+        }
+        if (currentProperty == property && i == EMPLOYEE_ID_SERIAL_NUMBER) {
+            inFile.close();
+            return true;
+        }
+        else if(currentProperty == property && i == EMPLOYEE_ID_NUMBER_SERIAL_NUMBER) {
+            inFile.close();
+            return true;
+        }
+    }
+    inFile.close();
+    // 读取完所有行，未找到匹配的工号
+    return false;
+}
+
+// 重载 >> 运算符
 istream& operator>>(istream& in, EmployeeProfile& profile) {
-    const int NAME_WIDTH = 15;
-    const int INFO_WIDTH = 20;
 
     cout << "工号:";
     in >> profile.id;
+    if (EmployeeProfile::isPropertyExists(profile.id, EMPLOYEE_FILENAME, EMPLOYEE_ID_SERIAL_NUMBER)) {
+        cout << "工号已存在！" << endl;
+        return in;
+    }
     cout << "职工姓名:";
     in >> profile.name;
     cout << "身份证号:";
     in >> profile.idNumber;
+    if (EmployeeProfile::isPropertyExists(profile.idNumber, EMPLOYEE_FILENAME, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER)) {
+        cout << "身份证号已存在！" << endl;
+        return in;
+    }
     cout << "性别:";
     in >> profile.gender;
     cout << "年龄:";
@@ -247,16 +326,13 @@ istream& operator>>(istream& in, EmployeeProfile& profile) {
     return in;
 }
 
+// 重载 << 运算符
 ostream& operator<<(ostream& out, EmployeeProfile& profile)
 {
     const int SHORT_WIDTH = 10; // 短列宽
     const int MIDDLE_WIDTH = 15; // 中列宽
     const int LONG_WIDTH = 20; // 长列宽
     const int LINE_LENGTH = 155; // 分割线长度
-
-
-    // 分割线
-    //out << string(SHORT_WIDTH + LONG_WIDTH * 7 + 3, '-') << endl;
 
     // 输出数据行
     out << left << setw(MIDDLE_WIDTH) << profile.id
@@ -275,7 +351,7 @@ ostream& operator<<(ostream& out, EmployeeProfile& profile)
 }
 
 
-// 构造函数定义
+// 有参构造函数定义
 EmployeeProfile::EmployeeProfile(
     string i,
     string n,
@@ -303,6 +379,7 @@ EmployeeProfile::EmployeeProfile(
 {
 }
 
+// 成员变量对应的get函数
 string EmployeeProfile::getId()
 {
     return id;

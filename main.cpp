@@ -12,11 +12,14 @@
 #include <algorithm>
 #include <cctype>
 #include <regex>
+#include <functional>
+#include "MD5.h"
 
 using namespace std;
 
 bool login();
 void myRegister();
+string inputPassword();
 void menu();
 void displayAllProfile();
 void insertEmployeeProfile();
@@ -41,6 +44,8 @@ int main() {
 		cout << "****       	         *****" << endl;
 		cout << "****       2. 注册       *****" << endl;
 		cout << "****       	         *****" << endl;
+		cout << "****     ESC.退出系统    *****" << endl;
+		cout << "****       	         *****" << endl;
 		cout << "******************************" << endl;
 
 		char first;
@@ -52,7 +57,7 @@ int main() {
 				// 如果登录成功，进入主界面
 				if (login()) {
 					menu();
-					return 0;// TODO 有待考虑
+					return 0;
 				}
 				//menu(); return 0;// 此行代码便于调试，后期删除
 				break;
@@ -65,16 +70,13 @@ int main() {
 			}
 			else if (first == 27) {
 				cout << "退出成功！";
-				// 用return 0 的话在meun()调用main()之后还会再执行meun()
+				// 用return 0 的话在meun()中调用main()之后还会再执行meun()
 				exit(0);
 			}
 			else {
 				cout << "请按1或2键（按ESC键可退出系统）" << endl;
 			}
-
-
 		}
-
 	}
 
 	return 0;
@@ -93,7 +95,7 @@ bool login() {
 			return false;
 		}
 		cout << "请输入密码：";
-		cin >> password;
+		password = inputPassword();
 		User user(name, password);
 		if (user.isPasswordValid(filename)) {
 			std::system("cls");
@@ -126,12 +128,11 @@ void myRegister() {
 
 	}
 
-
 	while (1) {
 		cout << "请输入密码：";
-		cin >> password;
+		password = inputPassword();
 		cout << "请再次输入密码：";
-		cin >> confirmPassword;
+		confirmPassword = inputPassword();
 		if (password != confirmPassword) {
 			cout << "两次密码不一致，请重新输入！" << endl;
 		}
@@ -147,19 +148,55 @@ void myRegister() {
 	cout << "注册成功" << endl;
 }
 
+string inputPassword() {
+	char password[21]; // 20位密码加上字符串结束符
+	int index = 0;
+	while (1) {
+		char ch;
+		ch = _getch();
+		if (ch == 8) { // 退格键
+			if (index != 0) {
+				cout << "\b \b"; // 删除一个字符
+				index--;
+			}
+		}
+		else if (ch == '\r') { // 回车键
+			password[index] = '\0';
+			cout << endl;
+			if (index < 6) {
+				cout << "密码长度不能少于6位，请重新输入：";
+				index = 0; // 重置密码输入位置
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			if (index < 20) { // 密码长度限制为20位
+				cout << "*";
+				password[index++] = ch;
+			}
+			else {
+				cout << "\n密码长度不能超过20位，请重新输入：";
+				index = 0; // 重置密码输入位置
+			}
+		}
+	}
+	string passwordStr(password);
+	MD5 md5;
+	return md5.calculate(passwordStr);
+}
+
 void menu() {
 	while (1) {
 		cout << "     欢迎使用职工档案管理系统   " << endl;
 		cout << "————————————————————————————————————" << endl;
 		cout << "|                                  |" << endl;
-		cout << "|     1. 查询所有职工档案信息      |" << endl;
+		cout << "|     1. 查询职工档案信息          |" << endl;
 		cout << "|     2. 新增职工档案信息          |" << endl;
 		cout << "|     3. 修改职工档案信息          |" << endl;
 		cout << "|     4. 删除职工档案信息          |" << endl;
-		cout << "|                                  |" << endl;
-		cout << "|                                  |" << endl;
-		cout << "|                                  |" << endl;
-		cout << "|                                  |" << endl;
+		cout << "|     ESC.退出登录                 |" << endl;
 		cout << "|                                  |" << endl;
 		cout << "————————————————————————————————————" << endl;
 
@@ -300,7 +337,7 @@ void displayAllProfile() {
 		}
 		case '8':
 			fuzzyQuery(employeeProfiles);
-			_getch();
+			std::system("pause");
 			std::system("cls");
 			break;
 		case 27: // ESC键
@@ -333,7 +370,7 @@ void displayAllProfile() {
 			break;
 		default:
 			std::system("cls");
-			cout << i;
+			//cout << i;
 			cout << KEY_ERROR << endl;
 		}
 
@@ -370,10 +407,12 @@ void updateEmployeeProfile(string filename) {
 	}
 }
 
+// 通过工号更新职工信息
 void updateEmployeeProfileById(string filename) {
 	EmployeeProfile::updateProfileById(filename);
 }
 
+// 通过身份证号更新职工信息
 void updateEmployeeProfileByIdNumber(string filename) {
 	EmployeeProfile::updateProfileByIdNumber(filename);
 }
@@ -445,7 +484,7 @@ void fuzzyQuery(vector<EmployeeProfile> employeeProfiles) {
 		}
 	}
 
-	cout << "总职工数：" << count;
+	cout << "总职工数：" << count << endl;
 }
 
 // 从文件中获取每一行的内容，并构建成一个EmployeeProfile对象数组
@@ -455,7 +494,8 @@ vector<EmployeeProfile> loadEmployeeProfiles(const string& filename) {
 	if (inFile.is_open()) {
 		std::string line;
 		while (std::getline(inFile, line)) {
-			if (!line.empty()) { // 确保行不为空
+			// 确保行不为空
+			if (!line.empty()) { 
 				EmployeeProfile profile = createProfileFromLine(line);
 				profiles.push_back(profile);
 			}
@@ -479,7 +519,7 @@ EmployeeProfile createProfileFromLine(const std::string& line) {
 	getline(iss, name, ',');
 	getline(iss, idNumber, ',');
 	getline(iss, gender, ',');
-	// 对于整数等非字符串类型，需要额外的转换
+	// 对于整数非字符串类型，需要额外的转换
 	getline(iss, ageStr, ',');
 	getline(iss, phoneNumber, ',');
 	getline(iss, address, ',');
@@ -487,7 +527,7 @@ EmployeeProfile createProfileFromLine(const std::string& line) {
 	getline(iss, position, ',');
 	getline(iss, hireDate, ',');
 	getline(iss, department);
-	// 将字符串ageStr转化为int类型
+	// 将字符串ageStr转化为int类型age
 	age = stoi(ageStr);
 	// 创建 EmployeeProfile 对象
 	return EmployeeProfile(id, name, idNumber, gender, age, phoneNumber, address, education, position, hireDate, department);

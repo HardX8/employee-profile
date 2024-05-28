@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 
-User::User(string na, string pa) : name(na), password(pa)
+using namespace std;
+
+User::User(string na, string pa, string ph) : name(na), password(pa), phone(ph)
 {
 
 }
@@ -16,61 +18,71 @@ string User::getPassword() {
 }
 
 // 将用户信息保存至文件中
-void User::saveUserToFile(const std::string& filename) {
-    std::ofstream outFile(filename, std::ios_base::app);
+void User::saveUserToFile(const string& filename) {
+    ofstream outFile(filename, ios_base::app);
     if (!outFile.is_open()) {
-        std::cerr << "无法打开文件: " << filename << std::endl;
+        cerr << "无法打开文件: " << filename << endl;
         return;
     }
 
-    // 简单地将用户名和密码写入文件，中间可以用特定分隔符分开，便于之后解析
-    outFile << name << "," << password << std::endl;
+    // 将用户名和密码写入文件，中间用逗号分开，便于之后解析
+    outFile << name << "," << password << phone << endl;
     outFile.close();
-    std::cout << "用户数据已保存至: " << filename << std::endl;
-}
-
-// 判断是否存在该用户名
-bool User::isUsernameExists(const std::string& username, const std::string& filename) {
-    std::ifstream inFile(filename);
-    if (!inFile.is_open()) {
-        std::cerr << "无法打开文件: " << filename << std::endl;
-        return false; // 文件不存在或无法打开，视为用户名不存在
-    }
-
-    std::string line;
-    while (std::getline(inFile, line)) {
-        size_t pos = line.find(',');
-        if (pos != std::string::npos && line.substr(0, pos) == username) {
-            inFile.close();
-            return true; // 用户名已存在
-        }
-    }
-    inFile.close();
-    return false; // 读取完所有行，未找到匹配的用户名
+    cout << "用户数据已保存至: " << filename << endl;
 }
 
 // 判断用户名和密码是否匹配
 bool User::isPasswordValid(const string& filename)
 {
-    std::ifstream inFile(filename);
+    ifstream inFile(filename);
     if (!inFile.is_open()) {
-        std::cerr << "无法打开文件: " << filename << std::endl;
-        return false; // 文件不存在或无法打开，无法验证
+        cerr << "无法打开文件: " << filename << endl;
+        // 文件不存在或无法打开，无法验证
+        return false; 
     }
 
-    std::string line;
-    while (std::getline(inFile, line)) {
+    string line;
+    while (getline(inFile, line)) {
         size_t pos = line.find(',');
-        if (pos != std::string::npos) {
-            std::string storedUsername = line.substr(0, pos);
-            std::string storedPassword = line.substr(pos + 1);
+        if (pos != string::npos) {
+            string storedUsername = line.substr(0, pos);
+            string storedPassword = line.substr(pos + 1);
 
             if (storedUsername == name && storedPassword == password) {
                 inFile.close();
-                return true; // 用户名和密码匹配
+                // 用户名和密码匹配
+                return true; 
             }
         }
     }
     inFile.close();
-    return false; // 未找到匹配的用户名密码组合
+    // 未找到匹配的用户名密码组合
+    return false; 
+}
+
+// 判断是否存在该用户名
+bool User::isUsernameExists(const string& username, const string& filename) {
+    ifstream inFile(filename);
+    if (!inFile.is_open()) {
+        cerr << "无法打开文件: " << filename << endl;
+        return false; // 文件不存在或无法打开，视为用户名不存在
+    }
+
+    string line;
+    while (getline(inFile, line)) {
+        size_t pos = line.find(',');
+        if (pos != string::npos && line.substr(0, pos) == username) {
+            inFile.close();
+            // 用户名已存在
+            return true; 
+        }
+    }
+    inFile.close();
+    // 读取完所有行，未找到匹配的用户名
+    return false; 
+}
+
+string User::findPhoneNumberAndSendVerificationCode(const std::string& phone)
+{
+    return string();
 }
