@@ -6,6 +6,8 @@
 #include <sstream>
 #include <vector>
 #include "Constant.h"
+#include <regex>
+#include <ctime>
 
 using namespace std;
 
@@ -291,21 +293,66 @@ bool EmployeeProfile::isPropertyExists(const string& property, const string& fil
 
 // 重载 >> 运算符
 istream& operator>>(istream& in, EmployeeProfile& profile) {
+    // 身份证号的正则表达式
+    regex idNumberPattern("^([1-6][1-9]|[2-5]0)\\d{4}(18|19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2]\\d|3[01])\\d{3}[0-9Xx]$");
 
-    cout << "工号:";
-    in >> profile.id;
-    if (EmployeeProfile::isPropertyExists(profile.id, EMPLOYEE_FILENAME, EMPLOYEE_ID_SERIAL_NUMBER)) {
-        cout << "工号已存在！" << endl;
-        return in;
+    while (1) {
+        cout << "工号(长度为10位,前四位数在1956~当前年份之间):";
+        in >> profile.id;
+        // 如果格式有误则重新输入
+        if (profile.id.size() == 10) {
+            // 提取前四位
+            string yearStr = profile.id.substr(0, 4);
+            // 转换为int
+            int yearInt = stoi(yearStr);
+
+            // 获取当前时间
+            time_t now = time(0);
+            // 定义一个tm结构体变量来保存转换后的时间
+            tm localTimeStruct;
+            // 使用localtime_s进行安全的转换
+            localtime_s(&localTimeStruct, &now);
+            // 获取年份，tm_year是从1900年开始的，所以需要加1900
+            int currentYear = localTimeStruct.tm_year + 1900;
+
+            if (yearInt < 1956 || yearInt > currentYear) {
+                cout << "工号格式有误！" << endl;
+                continue;
+            }
+        }
+        else {
+            cout << "工号格式有误！" << endl;
+            continue;
+        }
+        // 工号已存在
+        if (EmployeeProfile::isPropertyExists(profile.id, EMPLOYEE_FILENAME, EMPLOYEE_ID_SERIAL_NUMBER)) {
+            cout << "工号已存在！" << endl;
+        }
+        else {
+            break;
+        }
     }
+
     cout << "职工姓名:";
     in >> profile.name;
-    cout << "身份证号:";
-    in >> profile.idNumber;
-    if (EmployeeProfile::isPropertyExists(profile.idNumber, EMPLOYEE_FILENAME, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER)) {
-        cout << "身份证号已存在！" << endl;
-        return in;
+
+    while (1) {
+        cout << "身份证号:";
+        in >> profile.idNumber;
+        // 如果格式有误则重新输入
+        if (!regex_match(profile.idNumber, idNumberPattern)) {
+            cout << "身份证号格式有误！" << endl;
+            continue;
+        }
+        // 身份证号已存在
+        if (EmployeeProfile::isPropertyExists(profile.idNumber, EMPLOYEE_FILENAME, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER)) {
+            cout << "身份证号已存在！" << endl;
+        }
+        else {
+            break;
+        }
     }
+
     cout << "性别:";
     in >> profile.gender;
     cout << "年龄:";
