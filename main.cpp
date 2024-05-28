@@ -13,13 +13,13 @@
 #include <cctype>
 #include <regex>
 #include <functional>
-#include "MD5.h"
 
 using namespace std;
 
 bool login();
 void myRegister();
-string inputPassword();
+void forgetPassword();
+bool verifyPhone(string phone);
 void menu();
 void displayAllProfile();
 void insertEmployeeProfile();
@@ -38,45 +38,50 @@ int main() {
 	while (1) {
 
 		cout << "  欢迎使用职工档案管理系统   " << endl;
-		cout << "******************************" << endl;
-		cout << "****                     *****" << endl;
-		cout << "****       1. 登录       *****" << endl;
-		cout << "****       	         *****" << endl;
-		cout << "****       2. 注册       *****" << endl;
-		cout << "****       	         *****" << endl;
-		cout << "****     ESC.退出系统    *****" << endl;
-		cout << "****       	         *****" << endl;
-		cout << "******************************" << endl;
+		cout << "********************************" << endl;
+		cout << "****                       *****" << endl;
+		cout << "****       1. 登录         *****" << endl;
+		cout << "****       	           *****" << endl;
+		cout << "****       2. 注册         *****" << endl;
+		cout << "****       	           *****" << endl;
+		cout << "****       3. 忘记密码	   *****" << endl;
+		cout << "****       	           *****" << endl;
+		cout << "****       ESC.退出系统    *****" << endl;
+		cout << "****       	           *****" << endl;
+		cout << "********************************" << endl;
 
 		char first;
-		while (1) {
-			first = _getch();
-			if (first == '1') {
-				std::system("cls");
-				cout << "  欢迎登录职工档案管理系统   " << endl;
-				// 如果登录成功，进入主界面
-				if (login()) {
-					menu();
-					return 0;
-				}
-				//menu(); return 0;// 此行代码便于调试，后期删除
-				break;
+
+		first = _getch();
+		switch (first) {
+		case '1':
+			std::system("cls");
+			cout << "  欢迎登录职工档案管理系统   " << endl;
+			// 如果登录成功，进入主界面
+			if (login()) {
+				menu();
+				return 0;
 			}
-			else if (first == '2') {
-				std::system("cls");
-				cout << "  欢迎注册职工档案管理系统   " << endl;
-				myRegister();
-				break;
-			}
-			else if (first == 27) {
-				cout << "退出成功！";
-				// 用return 0 的话在meun()中调用main()之后还会再执行meun()
-				exit(0);
-			}
-			else {
-				cout << "请按1或2键（按ESC键可退出系统）" << endl;
-			}
+			//menu(); return 0;// 此行代码便于调试，后期删除
+			break;
+		case '2':
+			std::system("cls");
+			cout << "  欢迎注册职工档案管理系统   " << endl;
+			myRegister();
+			break;
+		case '3':
+			std::system("cls");
+			cout << "  忘记密码   " << endl;
+			forgetPassword();
+			break;
+		case 27:
+			cout << "退出成功！";
+			// 用return 0 的话在meun()中调用main()之后还会再执行meun()
+			exit(0);
+		default:
+			cout << "请按正确的按键！" << endl;
 		}
+
 	}
 
 	return 0;
@@ -95,7 +100,7 @@ bool login() {
 			return false;
 		}
 		cout << "请输入密码：";
-		password = inputPassword();
+		password = User::inputPassword();
 		User user(name, password);
 		if (user.isPasswordValid(filename)) {
 			std::system("cls");
@@ -112,7 +117,7 @@ bool login() {
 }
 
 void myRegister() {
-	string name, password, confirmPassword;
+	string name, password, confirmPassword, phone;
 	string filename = USER_FILENAME;
 	while (1) {
 		cout << "请输入用户名：";
@@ -129,10 +134,29 @@ void myRegister() {
 	}
 
 	while (1) {
+		cout << "请输入手机号：";
+		cin >> phone;
+
+		// 如果手机号格式不正确
+		if (!verifyPhone(phone)) {
+			continue;
+		}
+
+		// 检查手机号是否存在
+		bool phoneExists = User::isPhoneExists(phone, filename);
+		if (phoneExists) {
+			cout << "手机号已存在，请重新输入" << endl;
+		}
+		else {
+			break;
+		}
+	}
+
+	while (1) {
 		cout << "请输入密码：";
-		password = inputPassword();
+		password = User::inputPassword();
 		cout << "请再次输入密码：";
-		confirmPassword = inputPassword();
+		confirmPassword = User::inputPassword();
 		if (password != confirmPassword) {
 			cout << "两次密码不一致，请重新输入！" << endl;
 		}
@@ -140,7 +164,8 @@ void myRegister() {
 			break;
 		}
 	}
-	User user(name, password);
+
+	User user(name, password, phone);
 	std::system("cls");
 	// 保存用户信息
 	user.saveUserToFile(filename);
@@ -148,45 +173,40 @@ void myRegister() {
 	cout << "注册成功" << endl;
 }
 
-string inputPassword() {
-	char password[21]; // 20位密码加上字符串结束符
-	int index = 0;
+void forgetPassword() {
+	string phone, code, VerificationCode;
 	while (1) {
-		char ch;
-		ch = _getch();
-		if (ch == 8) { // 退格键
-			if (index != 0) {
-				cout << "\b \b"; // 删除一个字符
-				index--;
-			}
+		cout << "请输入手机号：";
+		cin >> phone;
+		if (!verifyPhone(phone)) {
+			continue;
 		}
-		else if (ch == '\r') { // 回车键
-			password[index] = '\0';
-			cout << endl;
-			if (index < 6) {
-				cout << "密码长度不能少于6位，请重新输入：";
-				index = 0; // 重置密码输入位置
-			}
-			else {
-				break;
-			}
-		}
-		else {
-			if (index < 20) { // 密码长度限制为20位
-				cout << "*";
-				password[index++] = ch;
-			}
-			else {
-				cout << "\n密码长度不能超过20位，请重新输入：";
-				index = 0; // 重置密码输入位置
-			}
+		VerificationCode = User::findPhoneAndSendVerificationCode(phone, USER_FILENAME);
+		if (VerificationCode != "") {
+			break;
 		}
 	}
-	string passwordStr(password);
-	MD5 md5;
-	return md5.calculate(passwordStr);
+	while (1) {
+		cout << "请输入验证码：";
+		cin >> code;
+		if (VerificationCode == code) {
+			User::updateUserByPhone(USER_FILENAME, phone);
+			break;	
+		}
+		cout << "验证码错误，请重新输入：";
+	}
 }
 
+bool verifyPhone(string phone) {
+	// 定义手机号正则表达式，这里简单匹配11位数字
+	regex phonePattern("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$");
+
+	// 如果手机号格式不正确
+	if (!regex_match(phone, phonePattern)) {
+		cout << "手机号格式错误！" << endl;
+		return false;
+	}
+}
 void menu() {
 	while (1) {
 		cout << "     欢迎使用职工档案管理系统   " << endl;
@@ -495,7 +515,7 @@ vector<EmployeeProfile> loadEmployeeProfiles(const string& filename) {
 		std::string line;
 		while (std::getline(inFile, line)) {
 			// 确保行不为空
-			if (!line.empty()) { 
+			if (!line.empty()) {
 				EmployeeProfile profile = createProfileFromLine(line);
 				profiles.push_back(profile);
 			}

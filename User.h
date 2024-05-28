@@ -10,11 +10,15 @@ private:
 	string password;
 	// 手机号
 	string phone;
+
+	// 通过第i项内容查询并更新
+	static void updateUserByI(const string& filename, const string& phone, int i);
 public:
 	// 无参构造函数
 	User() = default;
 	// 有参构造函数
 	User(string na, string pa, string ph);
+	User(string na, string pa);
 
 	// 成员变量对应的get函数
 	string getName();
@@ -29,7 +33,16 @@ public:
 	// 判断是否存在该用户名
 	static bool isUsernameExists(const std::string& username, const std::string& filename);
 
-	// 
-	string findPhoneNumberAndSendVerificationCode(const std::string& phone);
+	// 判断是否存在该手机号
+	static bool isPhoneExists(const std::string& phone, const string& filename);
+
+	// 手机号存在时发送验证码
+	static string findPhoneAndSendVerificationCode(const string& phone, const string& filename);
+
+	// 根据手机号更新职工
+	static void updateUserByPhone(const string& filename, const string& phone);
+
+	// 输入密码
+	static string inputPassword();
 };
 
