@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 #include "Constant.h"
-#include <regex>
+//#include <regex>
 #include <ctime>
 
 using namespace std;
@@ -196,6 +196,42 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                     cin.unget(); 
                     // 进行输入操作
                     cin >> newE; 
+                    if (j == EMPLOYEE_ID_NUMBER_SERIAL_NUMBER - 1) {
+                        while (1) {
+                            // 如果格式有误则重新输入
+                            if (!regex_match(newE, idNumberPattern)) {
+                                cout << "身份证号格式有误！\n请重新输入身份证号：";
+                                cin >> newE;
+                                continue;
+                            }
+                            // 身份证号已存在
+                            if (EmployeeProfile::isPropertyExists(newE, EMPLOYEE_FILENAME, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER)) {
+                                cout << "身份证号已存在！\n请重新输入身份证号：";
+                                cin >> newE;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                    }
+                    if (j == EMPLOYEE_PHONE_SERIAL_NUMBER - 1) {
+                        while (1) {
+                            // 如果格式有误则重新输入
+                            if (!verifyPhone(newE)){
+                                cout << "请重新输入手机号：";
+                                cin >> newE;
+                                continue;
+                            }
+                            // 身份证号已存在
+                            if (EmployeeProfile::isPropertyExists(newE, EMPLOYEE_FILENAME, EMPLOYEE_PHONE_SERIAL_NUMBER)) {
+                                cout << "手机号已存在！\n请重新输入手机号：";
+                                cin >> newE;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                    }
                     // 更新数据
                     employeeVector[j] = newE;
                     // 清除输入缓冲区
@@ -243,7 +279,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
     }
 }
 
-// 根据工号更新职工
+// 根据工号更新职工phonePattern
 void EmployeeProfile::updateProfileById(const string& filename)
 {
     cout << "请输入工号：";
@@ -297,9 +333,6 @@ bool EmployeeProfile::isPropertyExists(const string& property, const string& fil
 
 // 验证手机号是否正确
 bool EmployeeProfile::verifyPhone(string phone) {
-    // 定义手机号正则表达式，这里简单匹配11位数字
-    regex phonePattern("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$");
-
     // 如果手机号格式不正确
     if (!regex_match(phone, phonePattern)) {
         cout << "手机号格式错误！" << endl;
@@ -309,9 +342,6 @@ bool EmployeeProfile::verifyPhone(string phone) {
 
 // 重载 >> 运算符
 istream& operator>>(istream& in, EmployeeProfile& profile) {
-    // 身份证号的正则表达式
-    regex idNumberPattern("^([1-6][1-9]|[2-5]0)\\d{4}(18|19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2]\\d|3[01])\\d{3}[0-9Xx]$");
-
     while (1) {
         cout << "工号(长度为10位,前四位数在1956~当前年份之间):";
         in >> profile.id;
