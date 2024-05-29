@@ -11,6 +11,10 @@
 
 using namespace std;
 
+/**
+ * @author XZH
+ */
+
 // 通过第i项内容查询并更新
 void User::updateUserByI(const string& filename, const string& phone, int i)
 {

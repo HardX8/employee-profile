@@ -17,6 +17,9 @@
 
 using namespace std;
 
+/**
+ * @author XZH
+ */
 bool login();
 void myRegister();
 void forgetPassword();
@@ -33,10 +36,17 @@ void fuzzyQuery(vector<EmployeeProfile> employeeProfiles);
 vector<EmployeeProfile> loadEmployeeProfiles(const string& filename);
 EmployeeProfile createProfileFromLine(const std::string& line);
 void tableTitle();
-
 int main() {
 	while (1) {
-
+		// 设置黑窗口标题
+		SetConsoleTitleA("职工档案管理系统-XZH");
+		// 设置黑窗口和字体颜色
+		system("color f0");
+		// 显示日期
+		system("date /T");
+		// 显示时间
+		system("TIME /T");
+		//SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE);//设置青色
 		cout << "  欢迎使用职工档案管理系统   " << endl;
 		cout << "********************************" << endl;
 		cout << "****                       *****" << endl;
@@ -59,6 +69,8 @@ int main() {
 			cout << "  欢迎登录职工档案管理系统   " << endl;
 			// 如果登录成功，进入主界面
 			if (login()) {
+				// 设置黑窗口和字体颜色
+				system("color 0B");
 				menu();
 				return 0;
 			}
@@ -75,11 +87,16 @@ int main() {
 			forgetPassword();
 			break;
 		case 27:
-			cout << "退出成功！";
-			// 用return 0 的话在meun()中调用main()之后还会再执行meun()
-			exit(0);
+			cout << "是否退出" << endl << "1.确认2.取消";
+			if (_getch() == '1') {
+				cout << "退出成功！";
+				// 用return 0 的话在meun()中调用main()之后还会再执行meun()
+				exit(0);
+			}
+			std::system("cls");
+			break;
 		default:
-			cout << "请按正确的按键！" << endl;
+			cout << KEY_ERROR << endl;
 		}
 
 	}
@@ -274,6 +291,20 @@ void menu() {
 
 // 显示所有职工信息，并提供排序、模糊查询等功能
 void displayAllProfile() {
+	// 实现窗口最大化
+	// 模拟按下Alt键
+	keybd_event(VK_MENU, 0, 0, 0);
+	// 模拟按下空格键
+	keybd_event(VK_SPACE, 0, 0, 0);
+	// 模拟按下X键
+	keybd_event(0x58, 0, 0, 0);
+	// 释放X键
+	keybd_event(0x58, 0, KEYEVENTF_KEYUP, 0);
+	// 释放空格键
+	keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
+	// 释放Alt键
+	keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0); 
+
 	vector<EmployeeProfile> employeeProfiles = loadEmployeeProfiles(EMPLOYEE_FILENAME);
 
 	bool flag = true;

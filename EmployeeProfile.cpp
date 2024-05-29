@@ -11,7 +11,9 @@
 
 using namespace std;
 
-
+/**
+ * @author XZH
+ */
 // 通过第i个属性删除职工
 void EmployeeProfile::deleteProfileByI(const string& filename, int i)
 {

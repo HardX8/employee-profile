@@ -3,6 +3,9 @@
 
 using namespace std;
 
+/**
+ * @author XZH
+ */
 class EmployeeProfile
 {
 private:

@@ -1,6 +1,11 @@
 #pragma once
 #include <string>
+
 using namespace std;
+
+/**
+ * @author XZH
+ */
 class User
 {
 private:

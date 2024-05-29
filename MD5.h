@@ -4,6 +4,9 @@
 #include <cstring>
 #include <cmath>
 
+/**
+ * @author XZH
+ */
 
 // Functions for MD5 transformation
 #define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
