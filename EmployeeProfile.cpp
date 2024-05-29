@@ -272,7 +272,7 @@ bool EmployeeProfile::isPropertyExists(const string& property, const string& fil
         istringstream iss(line);
         string currentProperty;
 
-        // 读取每行的第i个字段（工号）
+        // 读取每行的第i个字段
         int tempI = i;
         while (tempI--) {
             getline(iss, currentProperty, ',');
@@ -285,10 +285,26 @@ bool EmployeeProfile::isPropertyExists(const string& property, const string& fil
             inFile.close();
             return true;
         }
+        else if (currentProperty == property && i == EMPLOYEE_PHONE_SERIAL_NUMBER) {
+            inFile.close();
+            return true;
+        }
     }
     inFile.close();
     // 读取完所有行，未找到匹配的工号
     return false;
+}
+
+// 验证手机号是否正确
+bool EmployeeProfile::verifyPhone(string phone) {
+    // 定义手机号正则表达式，这里简单匹配11位数字
+    regex phonePattern("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$");
+
+    // 如果手机号格式不正确
+    if (!regex_match(phone, phonePattern)) {
+        cout << "手机号格式错误！" << endl;
+        return false;
+    }
 }
 
 // 重载 >> 运算符
@@ -357,11 +373,27 @@ istream& operator>>(istream& in, EmployeeProfile& profile) {
     in >> profile.gender;
     cout << "年龄:";
     in >> profile.age;
-    cout << "联系电话:";
-    in >> profile.phoneNumber;
+
+    while (1) {
+        cout << "联系电话:";
+        in >> profile.phoneNumber;
+        // 如果格式有误则重新输入
+        if (!EmployeeProfile::verifyPhone(profile.phoneNumber)) {
+            continue;
+        }
+        // 身份证号已存在
+        if (EmployeeProfile::isPropertyExists(profile.phoneNumber, EMPLOYEE_FILENAME, EMPLOYEE_PHONE_SERIAL_NUMBER)) {
+            cout << "手机号已存在！" << endl;
+        }
+        else {
+            break;
+        }
+    }
+
+
     cout << "家庭地址:";
     in >> profile.address;
-    cout << "教育背景:";
+    cout << "学历:";
     in >> profile.education;
     cout << "职位:";
     in >> profile.position;

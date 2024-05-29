@@ -59,6 +59,8 @@ void User::updateUserByI(const string& filename, const string& phone, int i)
                 userVector.push_back(item);
             }
 
+            cout << "用户名：" << userVector[USER_NAME_SERIAL_NUMBER - 1] << endl;
+             
             string password, confirmPassword;
             while (1) {
                 cout << "请输入新密码：";

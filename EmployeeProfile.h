@@ -82,7 +82,8 @@ public:
     // 判断某个成员变量是否存在，i表示要查询的成员变量的序号
     static bool isPropertyExists(const string& property, const string& filename, const int i);
 
-
+    // 验证手机号是否正确
+    static bool verifyPhone(string phone);
 };
 
 

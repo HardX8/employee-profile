@@ -46,5 +46,6 @@ public:
 
 	// ÊäÈëÃÜÂë
 	static string inputPassword();
+
 };
 

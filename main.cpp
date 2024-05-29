@@ -20,7 +20,6 @@ using namespace std;
 bool login();
 void myRegister();
 void forgetPassword();
-bool verifyPhone(string phone);
 void menu();
 void displayAllProfile();
 void insertEmployeeProfile();
@@ -141,7 +140,7 @@ void myRegister() {
 		cin >> phone;
 
 		// 如果手机号格式不正确
-		if (!verifyPhone(phone)) {
+		if (!EmployeeProfile::verifyPhone(phone)) {
 			continue;
 		}
 
@@ -184,7 +183,7 @@ void forgetPassword() {
 	while (1) {
 		cout << "请输入手机号：";
 		cin >> phone;
-		if (!verifyPhone(phone)) {
+		if (!EmployeeProfile::verifyPhone(phone)) {
 			continue;
 		}
 		sendVerificationCode:
@@ -216,18 +215,6 @@ void forgetPassword() {
 			break;	
 		}
 		cout << "验证码错误，请重新输入：";
-	}
-}
-
-// 验证手机号是否正确
-bool verifyPhone(string phone) {
-	// 定义手机号正则表达式，这里简单匹配11位数字
-	regex phonePattern("^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\\d{8}$");
-
-	// 如果手机号格式不正确
-	if (!regex_match(phone, phonePattern)) {
-		cout << "手机号格式错误！" << endl;
-		return false;
 	}
 }
 
@@ -293,7 +280,7 @@ void displayAllProfile() {
 
 	while (flag) {
 
-		cout << "\t\t1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
+		cout << "\t    1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
 			"5.按入职时间升序 6.按入职时间降序 7.前往页码 8.更改每页展示数 9.模糊查询 ESC键退出" << endl << endl;
 		// 输出表头
 		tableTitle();

@@ -10,9 +10,14 @@ static int pageNum = 1;
 static int pageSize = 6;
 // 职工 id 的序号
 static int EMPLOYEE_ID_SERIAL_NUMBER = 1;
+// 职工 phone 的序号
+static int EMPLOYEE_PHONE_SERIAL_NUMBER = 6;
 // 职工 idNumber 的序号
 static int EMPLOYEE_ID_NUMBER_SERIAL_NUMBER = 3;
+
 // 用户 phone 的序号
 static int USER_PHONE_SERIAL_NUMBER = 3;
 // 用户 password 的序号
 static int USER_PASSWORD_SERIAL_NUMBER = 2;
+// 用户 name 的序号
+static int USER_NAME_SERIAL_NUMBER = 1;
