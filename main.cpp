@@ -199,7 +199,7 @@ void myRegister() {
 // 忘记密码
 void forgetPassword() {
 	string phone, code, VerificationCode;
-	chrono::high_resolution_clock::time_point startTime, enterCodeTime;
+	chrono::high_resolution_clock::time_point startTime, endTime;
 
 	while (1) {
 		cout << "请输入手机号：";
@@ -220,9 +220,9 @@ void forgetPassword() {
 	while (1) {
 		cin >> code;
 		// 记录结束时间
-		enterCodeTime = chrono::high_resolution_clock::now();
+		endTime = chrono::high_resolution_clock::now();
 
-		if (chrono::duration_cast<chrono::seconds>(enterCodeTime - startTime).count() > 60) {
+		if (chrono::duration_cast<chrono::seconds>(endTime - startTime).count() > 60) {
 			cout << "超过60秒，操作超时" << endl << "按回车键重新发送" << endl;
 			int i = _getch();
 			if (i == 13) {
@@ -520,6 +520,8 @@ void deleteEmployeeProfileByIdNumber(string filename) {
 
 // 模糊查询
 void fuzzyQuery(vector<EmployeeProfile> employeeProfiles) {
+	chrono::high_resolution_clock::time_point startTime, endTime;
+
 	string content;
 	// 记录查询结果数
 	int count = 0;
@@ -532,6 +534,9 @@ void fuzzyQuery(vector<EmployeeProfile> employeeProfiles) {
 
 	// 输出表头
 	tableTitle();
+
+	// 记录开始时间
+	startTime = chrono::high_resolution_clock::now();
 
 	// 逐一匹配
 	for (int i = 0; i < employeeProfiles.size(); i++) {
@@ -551,8 +556,12 @@ void fuzzyQuery(vector<EmployeeProfile> employeeProfiles) {
 			count++;
 		}
 	}
+	// 记录结束时间
+	endTime = chrono::high_resolution_clock::now();
 
-	cout << "总职工数：" << count << endl;
+	cout << "本次查询时间：" 
+		<< chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count() << " 毫秒" << endl
+		<< "总职工数：" << count << endl;
 }
 
 // 从文件中获取每一行的内容，并构建成一个EmployeeProfile对象数组

@@ -247,7 +247,13 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
             // 拼接新的职工信息
             string newLine = "";
             for (int j = 0; j < employeeVector.size(); j++) {
-                newLine += employeeVector[j] + ",";
+                // 如果不是最后一个则后面加逗号
+                if (j != employeeVector.size() - 1) {
+                    newLine += employeeVector[j] + ",";
+                }
+                else {
+                    newLine += employeeVector[j];
+                }
             }
             // 写入文件
             outFile << newLine << endl;
