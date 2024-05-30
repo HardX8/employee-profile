@@ -11,6 +11,8 @@ using namespace std;
 const string EMPLOYEE_FILENAME = "employee.txt";
 const string USER_FILENAME = "user.txt";
 const string KEY_ERROR = "请按正确的按键！";
+const int PAGE_NUM = 1;
+const int PAGE_SIZE = 6;
 static int pageNum = 1;
 static int pageSize = 6;
 

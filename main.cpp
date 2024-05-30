@@ -35,6 +35,8 @@ void deleteEmployeeProfileByIdNumber(string filename);
 void fuzzyQuery(vector<EmployeeProfile> employeeProfiles);
 vector<EmployeeProfile> loadEmployeeProfiles(const string& filename);
 EmployeeProfile createProfileFromLine(const std::string& line);
+void fullScreen();
+void closeBlackWindow();
 void tableTitle();
 int main() {
 	while (1) {
@@ -89,13 +91,15 @@ int main() {
 		case 27:
 			cout << "是否退出" << endl << "1.确认2.取消";
 			if (_getch() == '1') {
-				cout << "退出成功！";
+				cout << "\n退出成功！" << endl;
+				closeBlackWindow();
 				// 用return 0 的话在meun()中调用main()之后还会再执行meun()
 				exit(0);
 			}
 			std::system("cls");
 			break;
 		default:
+			system("cls");
 			cout << KEY_ERROR << endl;
 		}
 
@@ -291,19 +295,8 @@ void menu() {
 
 // 显示所有职工信息，并提供排序、模糊查询等功能
 void displayAllProfile() {
-	// 实现窗口最大化
-	// 模拟按下Alt键
-	keybd_event(VK_MENU, 0, 0, 0);
-	// 模拟按下空格键
-	keybd_event(VK_SPACE, 0, 0, 0);
-	// 模拟按下X键
-	keybd_event(0x58, 0, 0, 0);
-	// 释放X键
-	keybd_event(0x58, 0, KEYEVENTF_KEYUP, 0);
-	// 释放空格键
-	keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
-	// 释放Alt键
-	keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0); 
+	// 窗口最大化
+	fullScreen();
 
 	vector<EmployeeProfile> employeeProfiles = loadEmployeeProfiles(EMPLOYEE_FILENAME);
 
@@ -319,6 +312,7 @@ void displayAllProfile() {
 		int startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
 		int endRow = startRow + pageSize * (pageNum > 0 ? 1 : 0);
 		int total = employeeProfiles.size();
+		// 计算出来之后向上取整
 		int sumNum = static_cast<int>(ceil(static_cast<double>(total) / pageSize));
 
 		// 输出每一个数据
@@ -444,8 +438,11 @@ void displayAllProfile() {
 			//cout << i;
 			cout << KEY_ERROR << endl;
 		}
-
 	}
+	// 重置为第一页
+	pageNum = PAGE_NUM;
+	// 重置每页展示数
+	pageSize = PAGE_SIZE;
 }
 
 // 新增职工
@@ -602,6 +599,43 @@ EmployeeProfile createProfileFromLine(const std::string& line) {
 	age = stoi(ageStr);
 	// 创建 EmployeeProfile 对象
 	return EmployeeProfile(id, name, idNumber, gender, age, phoneNumber, address, education, position, hireDate, department);
+}
+
+// 窗口最大化
+void fullScreen() {
+	// 按下Alt键
+	keybd_event(VK_MENU, 0, 0, 0);
+	// 按下空格键
+	keybd_event(VK_SPACE, 0, 0, 0);
+	// 按下X键
+	keybd_event(0x58, 0, 0, 0);
+
+	// 释放X键
+	keybd_event(0x58, 0, KEYEVENTF_KEYUP, 0);
+	// 释放空格键
+	keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
+	// 释放Alt键
+	keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
+}
+
+// 关闭窗口
+void closeBlackWindow() {
+	cout << "3秒后关闭窗口.";
+	Sleep(1000);
+	cout << ".";
+	Sleep(1000);
+	cout << ".";
+	Sleep(1000);
+	
+	// 按下Alt键
+	keybd_event(VK_MENU, 0, 0, 0);
+	// 按下F4键
+	keybd_event(VK_F4, 0, 0, 0);
+
+	// 按下Alt键
+	keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
+	// 按下F4键
+	keybd_event(VK_F4, 0, KEYEVENTF_KEYUP, 0);
 }
 
 // 打印表头
