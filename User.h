@@ -1,5 +1,8 @@
 #pragma once
 #include <string>
+#include "Language.h"
+#include <memory>
+
 
 using namespace std;
 
@@ -15,6 +18,8 @@ private:
 	string password;
 	// 手机号
 	string phone;
+	// userLanguage是一个智能指针，用于管理Language类的对象
+	static shared_ptr<Language> userLanguage;
 
 	// 通过第i项内容查询并更新
 	static void updateUserByI(const string& filename, const string& phone, int i);
@@ -24,6 +29,8 @@ public:
 	// 有参构造函数
 	User(string na, string pa, string ph);
 	User(string na, string pa);
+	User(shared_ptr<Language>& langPtr);
+
 
 	// 成员变量对应的get函数
 	string getName();

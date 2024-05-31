@@ -14,8 +14,31 @@
 #include <regex>
 #include <functional>
 #include <chrono>
+#include "Language.h"
+#include "Chinese.h"
+#include "English.h"
+#include <memory>
+
+
+#pragma comment(lib, "Winmm.lib")
 
 using namespace std;
+
+string EnString = "_ENGLISH";
+string resultString = "";
+
+// 工厂函数，根据需要返回相应的Language实例
+shared_ptr<Language> createLanguage(const string& lang) {
+    if (lang == "_ENGLISH") {
+        return make_shared<English>();
+    } else { 
+		// 默认中文或其他逻辑
+        return make_shared<Chinese>();
+    }
+}
+// shared_ptr允许多个对象共享同一个资源的所有权，
+// 当最后一个指向该资源的shared_ptr销毁时，资源会被自动释放。
+shared_ptr<Language> language;
 
 /**
  * @author XZH
@@ -38,8 +61,40 @@ EmployeeProfile createProfileFromLine(const std::string& line);
 void fullScreen();
 void closeBlackWindow();
 void tableTitle();
+
+// 是否选择过语言
+bool selectLanguage = false;
 int main() {
 	while (1) {
+		// 如果还没选择语言
+		if (!selectLanguage) {
+			while (1) {
+				cout << "请选择语言\tPlease select language" << endl
+					<< "1.中文\t\t1.Chinese" << endl
+					<< "2.英文\t\t2.English";
+				int language =_getch();
+				if (language == '1') {
+					selectLanguage = true;
+					break;
+				}
+				else if (language == '2') {
+					resultString += EnString;
+					selectLanguage = true;
+					break;
+				}
+				else {
+					cout << KEY_ERROR;
+				}
+			}
+		}
+
+		// 选择语言对象
+		language = createLanguage(resultString);
+		// 将语言对象传递给User
+		User user(language);
+
+
+		std::system("cls");
 		// 设置黑窗口标题
 		SetConsoleTitleA("职工档案管理系统-XZH");
 		// 设置黑窗口和字体颜色
@@ -48,19 +103,14 @@ int main() {
 		system("date /T");
 		// 显示时间
 		system("TIME /T");
-		//SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE);//设置青色
-		cout << "  欢迎使用职工档案管理系统   " << endl;
-		cout << "********************************" << endl;
-		cout << "****                       *****" << endl;
-		cout << "****       1. 登录         *****" << endl;
-		cout << "****       	           *****" << endl;
-		cout << "****       2. 注册         *****" << endl;
-		cout << "****       	           *****" << endl;
-		cout << "****       3. 忘记密码	   *****" << endl;
-		cout << "****       	           *****" << endl;
-		cout << "****       ESC.退出系统    *****" << endl;
-		cout << "****       	           *****" << endl;
-		cout << "********************************" << endl;
+
+		cout << language->loginAndRegisterPage() << endl;
+
+		//PlaySound(TEXT("test1.wav"), NULL, SND_FILENAME);
+		// 播放wav文件
+		//PlaySound(TEXT("video\\test1.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+		// 播放mp3文件
+		mciSendString(TEXT("play video\\test2.mp3"), NULL, 0, NULL);
 
 		char first;
 
@@ -68,7 +118,7 @@ int main() {
 		switch (first) {
 		case '1':
 			std::system("cls");
-			cout << "  欢迎登录职工档案管理系统   " << endl;
+			cout << language->welcomeLogin << endl;
 			// 如果登录成功，进入主界面
 			if (login()) {
 				// 设置黑窗口和字体颜色
@@ -80,18 +130,18 @@ int main() {
 			break;
 		case '2':
 			std::system("cls");
-			cout << "  欢迎注册职工档案管理系统   " << endl;
+			cout << language->welcomeRegister << endl;
 			myRegister();
 			break;
 		case '3':
 			std::system("cls");
-			cout << "  忘记密码   " << endl;
+			cout << language->forgetPassword << endl;
 			forgetPassword();
 			break;
 		case 27:
-			cout << "是否退出" << endl << "1.确认2.取消";
+			cout << language->isExit << endl << language->yesOrNo;
 			if (_getch() == '1') {
-				cout << "\n退出成功！" << endl;
+				cout << language->exitSuccess << endl;
 				closeBlackWindow();
 				// 用return 0 的话在meun()中调用main()之后还会再执行meun()
 				exit(0);
@@ -113,24 +163,24 @@ bool login() {
 	string name, password;
 	string filename = USER_FILENAME;
 	while (1) {
-		cout << "请输入用户名：";
+		cout << language->inputUserName;
 		cin >> name;
 		// 检查用户名是否存在
 		bool nameExists = User::isUsernameExists(name, filename);
 		if (!nameExists) {
-			cout << "用户名不存在，请先注册" << endl;
+			cout << language->userNameNotExist << endl;
 			return false;
 		}
-		cout << "请输入密码：";
+		cout << language->inputPassword;
 		password = User::inputPassword();
 		User user(name, password);
 		if (user.isPasswordValid(filename)) {
 			std::system("cls");
-			cout << "登陆成功" << endl;
+			cout << language->loginSuccess << endl;
 			return true;
 		}
 		else {
-			cout << "用户名或密码错误，请重试！" << endl;
+			cout << language->userNameOrPasswordError << endl;
 		}
 
 	}
@@ -143,12 +193,12 @@ void myRegister() {
 	string name, password, confirmPassword, phone;
 	string filename = USER_FILENAME;
 	while (1) {
-		cout << "请输入用户名：";
+		cout << language->inputUserName;
 		cin >> name;
 		// 检查用户名是否存在
 		bool nameExists = User::isUsernameExists(name, filename);
 		if (nameExists) {
-			cout << "用户名已存在，请重新输入" << endl;
+			cout << language->userNameAlreadyExist << endl;
 		}
 		else {
 			break;
@@ -157,7 +207,7 @@ void myRegister() {
 	}
 
 	while (1) {
-		cout << "请输入手机号：";
+		cout << language->inputPhone;
 		cin >> phone;
 
 		// 如果手机号格式不正确
@@ -168,7 +218,7 @@ void myRegister() {
 		// 检查手机号是否存在
 		bool phoneExists = User::isPhoneExists(phone, filename);
 		if (phoneExists) {
-			cout << "手机号已存在，请重新输入" << endl;
+			cout << language->phoneAlreadyExist << endl;
 		}
 		else {
 			break;
@@ -176,12 +226,12 @@ void myRegister() {
 	}
 
 	while (1) {
-		cout << "请输入密码：";
+		cout << language->inputPassword;
 		password = User::inputPassword();
-		cout << "请再次输入密码：";
+		cout << language->inputConfirmPassword;
 		confirmPassword = User::inputPassword();
 		if (password != confirmPassword) {
-			cout << "两次密码不一致，请重新输入！" << endl;
+			cout << language->passwordDifferent << endl;
 		}
 		else {
 			break;
@@ -193,7 +243,7 @@ void myRegister() {
 	// 保存用户信息
 	user.saveUserToFile(filename);
 
-	cout << "注册成功" << endl;
+	cout << language->registerSuccess << endl;
 }
 
 // 忘记密码
@@ -202,7 +252,7 @@ void forgetPassword() {
 	chrono::high_resolution_clock::time_point startTime, endTime;
 
 	while (1) {
-		cout << "请输入手机号：";
+		cout << language->inputPhone;
 		cin >> phone;
 		if (!EmployeeProfile::verifyPhone(phone)) {
 			continue;
@@ -216,14 +266,14 @@ void forgetPassword() {
 			break;
 		}
 	}
-	cout << "请输入验证码：";
+	cout << language->inputCode;
 	while (1) {
 		cin >> code;
 		// 记录结束时间
 		endTime = chrono::high_resolution_clock::now();
 
 		if (chrono::duration_cast<chrono::seconds>(endTime - startTime).count() > 60) {
-			cout << "超过60秒，操作超时" << endl << "按回车键重新发送" << endl;
+			cout << language->overtime << endl << language->pressEnter << endl;
 			int i = _getch();
 			if (i == 13) {
 				goto sendVerificationCode;
@@ -235,23 +285,14 @@ void forgetPassword() {
 			User::updateUserByPhone(USER_FILENAME, phone);
 			break;	
 		}
-		cout << "验证码错误，请重新输入：";
+		cout << language->codeError;
 	}
 }
 
 // 功能菜单
 void menu() {
 	while (1) {
-		cout << "     欢迎使用职工档案管理系统   " << endl;
-		cout << "————————————————————————————————————" << endl;
-		cout << "|                                  |" << endl;
-		cout << "|     1. 查询职工档案信息          |" << endl;
-		cout << "|     2. 新增职工档案信息          |" << endl;
-		cout << "|     3. 修改职工档案信息          |" << endl;
-		cout << "|     4. 删除职工档案信息          |" << endl;
-		cout << "|     ESC.退出登录                 |" << endl;
-		cout << "|                                  |" << endl;
-		cout << "————————————————————————————————————" << endl;
+		language->menu();
 
 		string filename = EMPLOYEE_FILENAME;
 
@@ -260,7 +301,7 @@ void menu() {
 		switch (i)
 		{
 		case 27:
-			cout << "是否退出" << endl << "1.确认2.取消";
+			cout << language->isExit << endl << language->yesOrNo;
 			if (_getch() == '1') {
 				std::system("cls");
 				main();
@@ -304,8 +345,7 @@ void displayAllProfile() {
 
 	while (flag) {
 
-		cout << "\t    1.按工号升序 2.按工号降序 3.按年龄升序 4.按年龄降序"
-			"5.按入职时间升序 6.按入职时间降序 7.前往页码 8.更改每页展示数 9.模糊查询 ESC键退出" << endl << endl;
+		cout << language->selectFunction << endl << endl;
 		// 输出表头
 		tableTitle();
 
@@ -319,9 +359,9 @@ void displayAllProfile() {
 		for (int i = startRow; i < endRow && i < total; i++) {
 			cout << employeeProfiles[i] << endl;
 		}
-		cout << "\n当前页：" << pageNum << "/" << sumNum << "\t" << pageSize << "/页" <<
-			"\t向左：A/←\t向右：D/→" << endl
-			<< "总职工数：" << total;
+		cout << language->currentPage << pageNum << "/" << sumNum << "\t" << pageSize << language->page <<
+			language->leftOrRight << endl
+			<< language->totalEmployee << total;
 
 		int i = _getch();
 
@@ -329,41 +369,47 @@ void displayAllProfile() {
 		case '1':
 			std::system("cls");
 			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				// 按工号升序
 				return a.getId() < b.getId();
 				});
 			break;
 		case '2':
 			std::system("cls");
 			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				// 按工号降序
 				return a.getId() > b.getId();
 				});
 			break;
 		case '3':
 			std::system("cls");
 			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				// 按年龄升序
 				return a.getAge() < b.getAge();
 				});
 			break;
 		case '4':
 			std::system("cls");
 			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				// 按年龄序
 				return a.getAge() > b.getAge();
 				});
 			break;
 		case '5':
 			std::system("cls");
 			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				// 按入职时间升序
 				return a.getHireDate() < b.getHireDate();
 				});
 			break;
 		case '6':
 			std::system("cls");
 			sort(employeeProfiles.begin(), employeeProfiles.end(), [](EmployeeProfile& a, EmployeeProfile& b) {
+				// 按入职时间降序
 				return a.getHireDate() > b.getHireDate();
 				});
 			break;
 		case '7': {
-			cout << "\n请输入页码：";
+			cout << language->inputPageNum;
 			string inputStr;
 			cin >> inputStr;
 
@@ -385,16 +431,16 @@ void displayAllProfile() {
 			}
 			catch (const invalid_argument& e) {
 				// 捕获输入不是数字的异常
-				cerr << "请输入数字！" << endl;
+				cerr << language->inputNum << endl;
 			}
 			catch (const out_of_range& e) {
 				// 转换后的数字超出int范围
-				cerr << "数字太大，超出了允许的范围！" << endl;
+				cerr << language->numTooLong << endl;
 			}
 			break;
 		}
 		case '8':
-			cout << "\n请输入每页展示数：";
+			cout << language->inputNumPerPage;
 			cin >> pageSize;
 			std::system("cls");
 			// 回到第一页
@@ -455,7 +501,7 @@ void insertEmployeeProfile() {
 // 修改职工信息
 void updateEmployeeProfile(string filename) {
 	while (1) {
-		cout << "1.通过工号查询职工 2.通过身份证号查询职工 ESC键退出" << endl;
+		cout << language->updateByIdOrIdNumber << endl;
 		char i = _getch();
 		if (i == '1') {
 			std::system("cls");
@@ -470,7 +516,7 @@ void updateEmployeeProfile(string filename) {
 			break;
 		}
 		else {
-			cout << "请按1或2键" << endl;
+			cout << language->inputOneOrTwo << endl;
 		}
 	}
 }
@@ -488,7 +534,7 @@ void updateEmployeeProfileByIdNumber(string filename) {
 // 删除员工
 void deleteEmployeeProfile() {
 	while (1) {
-		cout << "1.通过工号删除 2.通过身份证号删除 ESC键退出" << endl;
+		cout << language->deleteByIdOrIdNumber << endl;
 		char i = _getch();
 		if (i == '1') {
 			std::system("cls");
@@ -503,7 +549,7 @@ void deleteEmployeeProfile() {
 			break;
 		}
 		else {
-			cout << "请按1或2键" << endl;
+			cout << language->inputOneOrTwo << endl;
 		}
 	}
 }
@@ -525,7 +571,7 @@ void fuzzyQuery(vector<EmployeeProfile> employeeProfiles) {
 	string content;
 	// 记录查询结果数
 	int count = 0;
-	cout << "\n请输入查询的内容：";
+	cout << language->inputSelectContent;
 	cin >> content;
 	std::system("cls");
 	// 转义content中的特殊正则表达式字符
@@ -559,9 +605,9 @@ void fuzzyQuery(vector<EmployeeProfile> employeeProfiles) {
 	// 记录结束时间
 	endTime = chrono::high_resolution_clock::now();
 
-	cout << "本次查询时间：" 
+	cout << language->selectTime
 		<< chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count() << " 毫秒" << endl
-		<< "总职工数：" << count << endl;
+		<< language->totalEmployee << count << endl;
 }
 
 // 从文件中获取每一行的内容，并构建成一个EmployeeProfile对象数组
@@ -580,7 +626,7 @@ vector<EmployeeProfile> loadEmployeeProfiles(const string& filename) {
 		inFile.close();
 	}
 	else {
-		cerr << "无法打开文件: " << filename << std::endl;
+		cerr << language->canNotOpen << filename << std::endl;
 	}
 	return profiles;
 }
@@ -629,7 +675,7 @@ void fullScreen() {
 
 // 关闭窗口
 void closeBlackWindow() {
-	cout << "3秒后关闭窗口.";
+	cout << language->close;
 	Sleep(1000);
 	cout << ".";
 	Sleep(1000);
@@ -641,9 +687,9 @@ void closeBlackWindow() {
 	// 按下F4键
 	keybd_event(VK_F4, 0, 0, 0);
 
-	// 按下Alt键
+	// 释放Alt键
 	keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
-	// 按下F4键
+	// 释放F4键
 	keybd_event(VK_F4, 0, KEYEVENTF_KEYUP, 0);
 }
 
@@ -655,18 +701,6 @@ void tableTitle() {
 	const int LINE_LENGTH = 155; // 分割线长度
 
 	// 输出表头
-	cout << left
-		<< setw(MIDDLE_WIDTH) << "工号:"
-		<< setw(SHORT_WIDTH) << "职工姓名:"
-		<< setw(LONG_WIDTH) << "身份证号:"
-		<< setw(SHORT_WIDTH) << "性别:"
-		<< setw(SHORT_WIDTH) << "年龄:"
-		<< setw(MIDDLE_WIDTH) << "联系电话:"
-		<< setw(LONG_WIDTH) << "家庭地址:"
-		<< setw(SHORT_WIDTH) << "学历:"
-		<< setw(MIDDLE_WIDTH) << "职位:"
-		<< setw(MIDDLE_WIDTH) << "入职日期:"
-		<< setw(MIDDLE_WIDTH) << "所属部门:"
-		<< endl;
+	language->tableTitle();
 	cout << string(LINE_LENGTH, '-') << endl;
 }

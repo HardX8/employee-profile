@@ -27,6 +27,7 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
 
     // 创建临时文件来保存修改后的数据
     string tempFilename = "temp_" + filename;
+    // 创建的就是新的空文件，不用ios_base::app追加形式
     ofstream outFile(tempFilename);
     if (!outFile.is_open()) {
         cerr << "无法创建临时文件！" << endl;
@@ -104,6 +105,7 @@ void EmployeeProfile::deleteProfileByIdNumber(const string& filename)
 // 将信息存入文件
 void EmployeeProfile::saveEmployeeToFile(const string& filename)
 {
+    // ios_base::app为追加模式打开文件
     ofstream outFile(filename, ios_base::app);
     if (!outFile.is_open()) {
         cerr << "无法打开文件: " << filename << endl;
@@ -140,6 +142,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
 
     // 创建临时文件来保存修改后的数据
     string tempFilename = "temp_" + filename;
+    // 创建的就是新的空文件，不用ios_base::app追加形式
     ofstream outFile(tempFilename);
     if (!outFile.is_open()) {
         cerr << "无法创建临时文件！" << endl;

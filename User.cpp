@@ -9,18 +9,22 @@
 #include <conio.h>
 #include <windows.h>
 
+
 using namespace std;
 
 /**
  * @author XZH
  */
 
+// 初始化静态成员变量
+shared_ptr<Language> User::userLanguage = nullptr;
+
 // 通过第i项内容查询并更新
 void User::updateUserByI(const string& filename, const string& phone, int i)
 {
     ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "无法打开文件！" << endl;
+        cerr << userLanguage->canNotOpen << endl;
         return;
     }
 
@@ -28,7 +32,7 @@ void User::updateUserByI(const string& filename, const string& phone, int i)
     string tempFilename = "temp_" + filename;
     ofstream outFile(tempFilename);
     if (!outFile.is_open()) {
-        cerr << "无法创建临时文件！" << endl;
+        cerr << userLanguage->canCreateTemp << endl;
         inFile.close();
         return;
     }
@@ -50,7 +54,7 @@ void User::updateUserByI(const string& filename, const string& phone, int i)
             outFile << line << endl;
         }
         else {
-            // 此处进行break的话会导致要删除职工后面的职工没有写入新文件
+            // 此处进行break的话会导致要删除职工后面的用户没有写入新文件
 
             // 使用vector来动态存储分割后的字符串
             vector<string> userVector;
@@ -63,16 +67,16 @@ void User::updateUserByI(const string& filename, const string& phone, int i)
                 userVector.push_back(item);
             }
 
-            cout << "用户名：" << userVector[USER_NAME_SERIAL_NUMBER - 1] << endl;
+            cout << userLanguage->userName << userVector[USER_NAME_SERIAL_NUMBER - 1] << endl;
              
             string password, confirmPassword;
             while (1) {
-                cout << "请输入新密码：";
+                cout << userLanguage->inputNewPassword;
                 password = inputPassword();
-                cout << "请再次输入密码：";
+                cout << userLanguage->inputConfirmPassword;
                 confirmPassword = inputPassword();
                 if (password != confirmPassword) {
-                    cout << "两次密码不一致，请重新输入！" << endl;
+                    cout << userLanguage->passwordDifferent << endl;
                 }
                 else {
                     break;
@@ -99,7 +103,7 @@ void User::updateUserByI(const string& filename, const string& phone, int i)
     remove(filename.c_str());
     // 将临时文件重命名为原文件名
     rename(tempFilename.c_str(), filename.c_str());
-    cout << "手机号为 " << phone << " 的用户密码已成功修改。" << endl;
+    cout << userLanguage->phone << phone << userLanguage->updatePasswordSuccess << endl;
 }
 
 User::User(string na, string pa, string ph) : name(na), password(pa), phone(ph)
@@ -111,6 +115,12 @@ User::User(string na, string pa) : name(na), password(pa)
 
 }
 
+User::User(shared_ptr<Language>& langPtr)
+{
+    userLanguage = langPtr;
+}
+
+
 string User::getName() {
     return name;
 }
@@ -118,18 +128,19 @@ string User::getPassword() {
     return password;
 }
 
+
 // 将用户信息保存至文件中
 void User::saveUserToFile(const string& filename) {
     ofstream outFile(filename, ios_base::app);
     if (!outFile.is_open()) {
-        cerr << "无法打开文件: " << filename << endl;
+        cerr << userLanguage->canNotOpen << filename << endl;
         return;
     }
 
     // 将用户名和密码写入文件，中间用逗号分开，便于之后解析
     outFile << name << "," << password << "," << phone << endl;
     outFile.close();
-    cout << "用户数据已保存至: " << filename << endl;
+    cout << userLanguage->saveUser << filename << endl;
 }
 
 // 判断用户名和密码是否匹配
@@ -137,7 +148,7 @@ bool User::isPasswordValid(const string& filename)
 {
     ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "无法打开文件: " << filename << endl;
+        cerr << userLanguage->canNotOpen << filename << endl;
         // 文件不存在或无法打开，无法验证
         return false; 
     }
@@ -175,7 +186,7 @@ bool User::isPasswordValid(const string& filename)
 bool User::isUsernameExists(const string& username, const string& filename) {
     ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "无法打开文件: " << filename << endl;
+        cerr << userLanguage->canNotOpen << filename << endl;
         // 文件不存在或无法打开，视为用户名不存在
         return false; 
     }
@@ -199,7 +210,7 @@ bool User::isPhoneExists(const string& phone, const string& filename)
 {
     ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "无法打开文件: " << filename << endl;
+        cerr << userLanguage->canNotOpen << filename << endl;
         return false; // 文件不存在或无法打开，视为用户名不存在
     }
 
@@ -231,15 +242,16 @@ string User::findPhoneAndSendVerificationCode(const string& phone, const string&
         srand(time(0));
         // 生成一个四位数的验证码
         int verificationCode = rand() % 9000 + 1000;
-        cout << "请稍等..." << endl;
+        cout << userLanguage->wait << endl;
         Sleep(1000);
-        cout << "正在发送" << endl;
+        cout << userLanguage->sending << endl;
         Sleep(1000);
-        cout << "已向手机号 " << phone << " 发送验证码：" << verificationCode << "\t(60秒有效)" << endl;
+        cout << userLanguage->sended << phone << userLanguage->sendCode << 
+            verificationCode << userLanguage->timeValid << endl;
         return to_string(verificationCode);
     }
     else {
-        cout << "该手机号未注册！" << endl;
+        cout << userLanguage->phoneNotRegister << endl;
     }
 
     // 未找到对应用户
@@ -269,7 +281,7 @@ string User::inputPassword() {
             password[index] = '\0';
             cout << endl;
             if (index < 6) {
-                cout << "密码长度不能少于6位，请重新输入：";
+                cout << userLanguage->passwordShort;
                 index = 0; // 重置密码输入位置
             }
             else {
@@ -282,7 +294,7 @@ string User::inputPassword() {
                 password[index++] = ch;
             }
             else {
-                cout << "\n密码长度不能超过20位，请重新输入：";
+                cout << userLanguage->passwordLong;
                 index = 0; // 重置密码输入位置
             }
         }

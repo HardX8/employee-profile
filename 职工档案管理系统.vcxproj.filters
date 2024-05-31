@@ -24,6 +24,15 @@
     <ClCompile Include="User.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Language.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Chinese.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="English.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EmployeeProfile.h">
@@ -36,6 +45,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MD5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Language.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Chinese.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="English.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
