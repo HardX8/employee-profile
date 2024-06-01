@@ -74,10 +74,12 @@ int main() {
 					<< "2.英文\t\t2.English";
 				int language =_getch();
 				if (language == '1') {
+					std::system("cls");
 					selectLanguage = true;
 					break;
 				}
 				else if (language == '2') {
+					std::system("cls");
 					resultString += EnString;
 					selectLanguage = true;
 					break;
@@ -96,7 +98,6 @@ int main() {
 		EmployeeProfile employee(language);
 
 
-		std::system("cls");
 		// 设置黑窗口标题
 		SetConsoleTitleA("职工档案管理系统-XZH");
 		// 设置黑窗口和字体颜色
@@ -128,7 +129,6 @@ int main() {
 				menu();
 				return 0;
 			}
-			//menu(); return 0;// 此行代码便于调试，后期删除
 			break;
 		case '2':
 			std::system("cls");
@@ -146,6 +146,7 @@ int main() {
 				cout << language->exitSuccess << endl;
 				closeBlackWindow();
 				// 用return 0 的话在meun()中调用main()之后还会再执行meun()
+				// 现在执行了关闭窗口函数，此处也可以忽略了
 				exit(0);
 			}
 			std::system("cls");
@@ -170,6 +171,7 @@ bool login() {
 		// 检查用户名是否存在
 		bool nameExists = User::isUsernameExists(name, filename);
 		if (!nameExists) {
+			//std::system("cls");
 			cout << language->userNameNotExist << endl;
 			return false;
 		}

@@ -69,13 +69,13 @@ English::English()
 	isExit = "Exit?";
 	yesOrNo = "1. Yes 2. No";
 	selectFunction = "\t    1. Ascending by Employee ID 2. Descending by Employee ID 3. Ascending by Age 4. Descending by Age"
-		"5. Ascending by Hire Date 6. Descending by Hire Date 7. Go to Page 8. Change Items Per Page 9. Fuzzy Query Press ESC to Exit";
+		"5. Ascending by Hire Date 6. Descending by Hire Date 7. Go to Page 8. Change Items Per Page 9. Fuzzy Query Press \t\tESC to Exit";
 	currentPage = "\nCurrent Page: ";
 	page = "/Page";
 	leftOrRight = "\tLeft: A/¡û\tRight: D/¡ú";
 	totalEmployee = "Total Employees: ";
-	updateByIdOrIdNumber = "1. Update Employee by ID 2. Update Employee by ID Number Press ESC to Exit";
-	deleteByIdOrIdNumber = "1. Delete Employee by ID 2. Delete Employee by ID Number Press ESC to Exit";
+	updateByIdOrIdNumber = "1. Update Employee by ID 2. Update Employee by ID Number Press \t\tESC to Exit";
+	deleteByIdOrIdNumber = "1. Delete Employee by ID 2. Delete Employee by ID Number Press \t\tESC to Exit";
 	selectTime = "Current Query Time: ";
 	close = "Window will close in 3 seconds.";
 	userName = "Username: ";
