@@ -122,5 +122,44 @@ Chinese::Chinese()
 	phoneNotRegister = "该手机号未注册！";
 	passwordShort = "密码长度不能少于6位，请重新输入：";
 	passwordLong = "\n密码长度不能超过20位，请重新输入：";
+
+	// -----------------------EmployeeProfile------------------------
+
+	employeeId = "工号为 ";
+	employeeAlreadyDel = " 的员工记录已成功删除。";
+	idNum = "身份证为 ";
+	employeeIdNotFound = "未找到工号为 ";
+	employeeRecord = " 的员工记录。";
+	idNumNotFound = "未找到身份证号为 ";
+	inputEmployeeId = "请输入工号：";
+	inputIdNum = "请输入身份证号：";
+	employeeSaveTo = "职工数据已保存至: ";
+	ratainOldVal = "按回车键则保留旧数据\n\n旧值：";
+	catNotUpdate = "不可修改";
+	oldVal = "旧值：";
+	newVal = "新值：";
+	idNumFormatError = "身份证号格式有误！\n请重新输入身份证号：";
+	idNumAlreadyExist = "身份证号已存在！\n请重新输入身份证号：";
+	reinputPhone = "请重新输入手机号：";
+	employeePhoneAlreadyExist = "手机号已存在！\n请重新输入手机号：";
+	employeeUpdateSuccess = " 的员工记录已成功修改。";
+	phoneFormatError = "手机号格式错误！";
+	employeeIdFormat = "工号(长度为10位,前四位数在1956~当前年份之间):";
+	employeeIdFormatError = "工号格式有误！";
+	employeeIdAlreadyExist = "工号已存在！";
+	employeeName = "职工姓名:";
+	inputIdNum2 = "身份证号（X为大写）:";
+	idNumFormatError2 = "身份证号格式有误！";
+	idNumAlreadyExist2 = "身份证号已存在！";
+	gender = "性别:";
+	age = "年龄:";
+	employeePhone = "联系电话:";
+	phoneAlreadyExist2 = "手机号已存在！";
+	address = "家庭地址:";
+	education = "学历:";
+	position = "职位:";
+	hireDate = "入职日期:";
+	department = "所属部门:";
+
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "Language.h"
+#include <memory>
 
 using namespace std;
 
@@ -21,6 +23,8 @@ private:
     string position;        // 职位
     string hireDate;        // 入职日期
     string department;      // 所属部门
+    // EmployeeLanguage是一个智能指针，用于管理Language类的对象
+    static shared_ptr<Language> employeeLanguage;
 
     // 通过第i项内容删除
     static void deleteProfileByI(const string& filename, int i);
@@ -44,6 +48,8 @@ public:
         string hireDate,
         string department
     );
+    // 用于初始化语言的构造函数
+    EmployeeProfile(shared_ptr<Language>& langPtr);
 
     // 成员变量对应的get函数
     string getId();

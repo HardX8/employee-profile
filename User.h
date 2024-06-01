@@ -29,6 +29,7 @@ public:
 	// 有参构造函数
 	User(string na, string pa, string ph);
 	User(string na, string pa);
+	// 用于初始化语言的构造函数
 	User(shared_ptr<Language>& langPtr);
 
 

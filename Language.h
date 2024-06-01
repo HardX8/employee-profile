@@ -71,5 +71,44 @@ public:
     string phoneNotRegister;
     string passwordShort;
     string passwordLong;
+
+    // -----------------------EmployeeProfile------------------------
+
+    string employeeId;
+    string employeeAlreadyDel;
+    string idNum;
+    string employeeIdNotFound;
+    string employeeRecord;
+    string idNumNotFound;
+    string inputEmployeeId;
+    string inputIdNum;
+    string employeeSaveTo;
+    string ratainOldVal;
+    string catNotUpdate;
+    string oldVal;
+    string newVal;
+    string idNumFormatError;
+    string idNumAlreadyExist;
+    string reinputPhone;
+    string 	employeePhoneAlreadyExist = "手机号已存在！\n请重新输入手机号：";
+    string employeeUpdateSuccess;
+    string phoneFormatError;
+    string employeeIdFormat;
+    string employeeIdFormatError;
+    string employeeIdAlreadyExist;
+    string employeeName;
+    string inputIdNum2;
+    string idNumFormatError2;
+    string idNumAlreadyExist2;
+    string gender;
+    string age;
+    string employeePhone;
+    string phoneAlreadyExist2;
+    string address;
+    string education;
+    string position;
+    string hireDate;
+    string department;
+
 };
 

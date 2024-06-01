@@ -92,6 +92,8 @@ int main() {
 		language = createLanguage(resultString);
 		// 将语言对象传递给User
 		User user(language);
+		// 将语言对象传递给Employee
+		EmployeeProfile employee(language);
 
 
 		std::system("cls");

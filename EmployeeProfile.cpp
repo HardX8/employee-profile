@@ -11,6 +11,8 @@
 
 using namespace std;
 
+shared_ptr<Language> EmployeeProfile::employeeLanguage = nullptr;
+
 /**
  * @author XZH
  */
@@ -21,7 +23,7 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
     cin >> id;
     ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "无法打开文件！" << endl;
+        cerr << employeeLanguage->canNotOpen << endl;
         return;
     }
 
@@ -30,7 +32,7 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
     // 创建的就是新的空文件，不用ios_base::app追加形式
     ofstream outFile(tempFilename);
     if (!outFile.is_open()) {
-        cerr << "无法创建临时文件！" << endl;
+        cerr << employeeLanguage->canCreateTemp << endl;
         inFile.close();
         return;
     }
@@ -70,20 +72,20 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
         // 将临时文件重命名为原文件名
         rename(tempFilename.c_str(), filename.c_str());
         if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
-            cout << "工号为 " << id << " 的员工记录已成功删除。" << endl;
+            cout << employeeLanguage->employeeId << id << employeeLanguage->employeeAlreadyDel << endl;
         }
         else {
-            cout << "身份证为 " << id << " 的员工记录已成功删除。" << endl;
+            cout << employeeLanguage->idNum << id << employeeLanguage->employeeAlreadyDel << endl;
         }
     }
     else {
         // 如果没找到匹配项，删除临时文件
         remove(tempFilename.c_str());
         if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
-            cout << "未找到工号为 " << id << " 的员工记录。" << endl;
+            cout << employeeLanguage->employeeIdNotFound << id << employeeLanguage->employeeRecord << endl;
         }
         else {
-            cout << "未找到身份证号为 " << id << " 的员工记录。" << endl;
+            cout << employeeLanguage->idNumNotFound << id << employeeLanguage->employeeRecord << endl;
         }
     }
 }
@@ -91,14 +93,14 @@ void EmployeeProfile::deleteProfileByI(const string& filename, int i)
 // 通过工号删除
 void EmployeeProfile::deleteProfileById(const string& filename)
 {
-    cout << "请输入工号：";
+    cout << employeeLanguage->inputEmployeeId;
     deleteProfileByI(filename, EMPLOYEE_ID_SERIAL_NUMBER);
 }
 
 // 通过身份证号删除
 void EmployeeProfile::deleteProfileByIdNumber(const string& filename)
 {
-    cout << "请输入身份证号：";
+    cout << employeeLanguage->inputIdNum;
     deleteProfileByI(filename, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER);
 }
 
@@ -108,7 +110,7 @@ void EmployeeProfile::saveEmployeeToFile(const string& filename)
     // ios_base::app为追加模式打开文件
     ofstream outFile(filename, ios_base::app);
     if (!outFile.is_open()) {
-        cerr << "无法打开文件: " << filename << endl;
+        cerr << employeeLanguage->canNotOpen << filename << endl;
         return;
     }
 
@@ -126,7 +128,7 @@ void EmployeeProfile::saveEmployeeToFile(const string& filename)
         << phoneNumber << "," << address << "," << education <<
         "," << position << "," << hireDate << "," << department << endl;
     outFile.close();
-    cout << "职工数据已保存至: " << filename << endl;
+    cout << employeeLanguage->employeeSaveTo << filename << endl;
 }
 
 // 通过第i项内容查询并更新
@@ -136,7 +138,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
     cin >> id;
     ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "无法打开文件！" << endl;
+        cerr << employeeLanguage->canNotOpen << endl;
         return;
     }
 
@@ -145,7 +147,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
     // 创建的就是新的空文件，不用ios_base::app追加形式
     ofstream outFile(tempFilename);
     if (!outFile.is_open()) {
-        cerr << "无法创建临时文件！" << endl;
+        cerr << employeeLanguage->canCreateTemp << endl;
         inFile.close();
         return;
     }
@@ -187,12 +189,13 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
             string newE;
             for (int j = 0; j < employeeVector.size(); j++) {
                 if (j == 0) {
-                    cout << "按回车键则保留旧数据\n\n旧值：" << employeeVector[0] << endl << "不可修改" << endl << endl;
+                    cout << employeeLanguage->ratainOldVal << employeeVector[0] << endl 
+                        << employeeLanguage->catNotUpdate << endl << endl;
                     j++;
                     // 清除输入缓冲区
                     cin.ignore();
                 }
-                cout << "旧值：" << employeeVector[j] << endl << "新值：";
+                cout << employeeLanguage->oldVal << employeeVector[j] << endl << employeeLanguage->newVal;
                 // 读取用户输入的字符
                 char input = cin.get(); 
                 // 如果不是回车键
@@ -205,13 +208,13 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                         while (1) {
                             // 如果格式有误则重新输入
                             if (!regex_match(newE, idNumberPattern)) {
-                                cout << "身份证号格式有误！\n请重新输入身份证号：";
+                                cout << employeeLanguage->idNumFormatError;
                                 cin >> newE;
                                 continue;
                             }
                             // 身份证号已存在
                             if (EmployeeProfile::isPropertyExists(newE, EMPLOYEE_FILENAME, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER)) {
-                                cout << "身份证号已存在！\n请重新输入身份证号：";
+                                cout <<employeeLanguage->idNumAlreadyExist;
                                 cin >> newE;
                             }
                             else {
@@ -223,13 +226,13 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                         while (1) {
                             // 如果格式有误则重新输入
                             if (!verifyPhone(newE)){
-                                cout << "请重新输入手机号：";
+                                cout << employeeLanguage->reinputPhone;
                                 cin >> newE;
                                 continue;
                             }
                             // 身份证号已存在
                             if (EmployeeProfile::isPropertyExists(newE, EMPLOYEE_FILENAME, EMPLOYEE_PHONE_SERIAL_NUMBER)) {
-                                cout << "手机号已存在！\n请重新输入手机号：";
+                                cout << employeeLanguage->employeePhoneAlreadyExist;
                                 cin >> newE;
                             }
                             else {
@@ -272,20 +275,20 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
         // 将临时文件重命名为原文件名
         rename(tempFilename.c_str(), filename.c_str());
         if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
-            cout << "工号为 " << id << " 的员工记录已成功修改。" << endl;
+            cout << employeeLanguage->employeeId << id << employeeLanguage->employeeUpdateSuccess << endl;
         }
         else {
-            cout << "身份证号为 " << id << " 的员工记录已成功修改。" << endl;
+            cout << employeeLanguage->idNum << id << employeeLanguage->employeeUpdateSuccess << endl;
         }
     }
     else {
         // 如果没找到匹配项，删除临时文件
         remove(tempFilename.c_str());
         if (i == EMPLOYEE_ID_SERIAL_NUMBER) {
-            cout << "未找到工号为 " << id << " 的员工记录。" << endl;
+            cout << employeeLanguage->employeeIdNotFound << id << employeeLanguage->employeeRecord << endl;
         }
         else {
-            cout << "未找到身份证号为 " << id << " 的员工记录。" << endl;
+            cout << employeeLanguage->employeeIdNotFound << id << employeeLanguage->employeeRecord << endl;
         }
     }
 }
@@ -293,14 +296,14 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
 // 根据工号更新职工phonePattern
 void EmployeeProfile::updateProfileById(const string& filename)
 {
-    cout << "请输入工号：";
+    cout << employeeLanguage->inputEmployeeId;
     updateProfileByI(filename, EMPLOYEE_ID_SERIAL_NUMBER);
 }
 
 // 根据身份证号更新职工
 void EmployeeProfile::updateProfileByIdNumber(const string& filename)
 {
-    cout << "请输入身份证号：";
+    cout << employeeLanguage->inputIdNum;
     updateProfileByI(filename, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER);
 }
 
@@ -309,7 +312,7 @@ bool EmployeeProfile::isPropertyExists(const string& property, const string& fil
 {
     ifstream inFile(filename);
     if (!inFile.is_open()) {
-        cerr << "无法打开文件: " << filename << endl;
+        cerr << employeeLanguage->canNotOpen << filename << endl;
         // 文件不存在或无法打开，视为用户名不存在
         return false; 
     }
@@ -346,7 +349,7 @@ bool EmployeeProfile::isPropertyExists(const string& property, const string& fil
 bool EmployeeProfile::verifyPhone(string phone) {
     // 如果手机号格式不正确
     if (!regex_match(phone, phonePattern)) {
-        cout << "手机号格式错误！" << endl;
+        cout << employeeLanguage->phoneFormatError << endl;
         return false;
     }
 }
@@ -354,7 +357,7 @@ bool EmployeeProfile::verifyPhone(string phone) {
 // 重载 >> 运算符
 istream& operator>>(istream& in, EmployeeProfile& profile) {
     while (1) {
-        cout << "工号(长度为10位,前四位数在1956~当前年份之间):";
+        cout << EmployeeProfile::employeeLanguage->employeeIdFormat;
         in >> profile.id;
         // 如果格式有误则重新输入
         if (profile.id.size() == 10) {
@@ -373,50 +376,50 @@ istream& operator>>(istream& in, EmployeeProfile& profile) {
             int currentYear = localTimeStruct.tm_year + 1900;
 
             if (yearInt < 1956 || yearInt > currentYear) {
-                cout << "工号格式有误！" << endl;
+                cout << EmployeeProfile::employeeLanguage->employeeIdFormatError << endl;
                 continue;
             }
         }
         else {
-            cout << "工号格式有误！" << endl;
+            cout << EmployeeProfile::employeeLanguage->employeeIdFormatError << endl;
             continue;
         }
         // 工号已存在
         if (EmployeeProfile::isPropertyExists(profile.id, EMPLOYEE_FILENAME, EMPLOYEE_ID_SERIAL_NUMBER)) {
-            cout << "工号已存在！" << endl;
+            cout << EmployeeProfile::employeeLanguage->employeeIdAlreadyExist << endl;
         }
         else {
             break;
         }
     }
 
-    cout << "职工姓名:";
+    cout << EmployeeProfile::employeeLanguage->employeeName;
     in >> profile.name;
 
     while (1) {
-        cout << "身份证号:";
+        cout << EmployeeProfile::employeeLanguage->inputIdNum2;
         in >> profile.idNumber;
         // 如果格式有误则重新输入
         if (!regex_match(profile.idNumber, idNumberPattern)) {
-            cout << "身份证号格式有误！" << endl;
+            cout << EmployeeProfile::employeeLanguage->idNumFormatError2 << endl;
             continue;
         }
         // 身份证号已存在
         if (EmployeeProfile::isPropertyExists(profile.idNumber, EMPLOYEE_FILENAME, EMPLOYEE_ID_NUMBER_SERIAL_NUMBER)) {
-            cout << "身份证号已存在！" << endl;
+            cout << EmployeeProfile::employeeLanguage->idNumAlreadyExist2 << endl;
         }
         else {
             break;
         }
     }
 
-    cout << "性别:";
+    cout << EmployeeProfile::employeeLanguage->gender;
     in >> profile.gender;
-    cout << "年龄:";
+    cout << EmployeeProfile::employeeLanguage->age;
     in >> profile.age;
 
     while (1) {
-        cout << "联系电话:";
+        cout << EmployeeProfile::employeeLanguage->employeePhone;
         in >> profile.phoneNumber;
         // 如果格式有误则重新输入
         if (!EmployeeProfile::verifyPhone(profile.phoneNumber)) {
@@ -424,7 +427,7 @@ istream& operator>>(istream& in, EmployeeProfile& profile) {
         }
         // 身份证号已存在
         if (EmployeeProfile::isPropertyExists(profile.phoneNumber, EMPLOYEE_FILENAME, EMPLOYEE_PHONE_SERIAL_NUMBER)) {
-            cout << "手机号已存在！" << endl;
+            cout << EmployeeProfile::employeeLanguage->phoneAlreadyExist2 << endl;
         }
         else {
             break;
@@ -432,15 +435,15 @@ istream& operator>>(istream& in, EmployeeProfile& profile) {
     }
 
 
-    cout << "家庭地址:";
+    cout << EmployeeProfile::employeeLanguage->address;
     in >> profile.address;
-    cout << "学历:";
+    cout << EmployeeProfile::employeeLanguage->education;
     in >> profile.education;
-    cout << "职位:";
+    cout << EmployeeProfile::employeeLanguage->position;
     in >> profile.position;
-    cout << "入职日期:";
+    cout << EmployeeProfile::employeeLanguage->hireDate;
     in >> profile.hireDate;
-    cout << "所属部门:";
+    cout << EmployeeProfile::employeeLanguage->department;
     in >> profile.department;
 
     return in;
@@ -497,6 +500,9 @@ EmployeeProfile::EmployeeProfile(
     hireDate(hd),
     department(dep)
 {
+}
+EmployeeProfile::EmployeeProfile(shared_ptr<Language>& langPtr) {
+    employeeLanguage = langPtr;
 }
 
 // 成员变量对应的get函数
