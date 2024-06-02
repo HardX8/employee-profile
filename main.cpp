@@ -271,7 +271,7 @@ void myRegister() {
 
 // —°‘Ò“Ù¿÷
 void selectMusic() {
-	const wstring fileExtension = L".mp3";
+	const wstring fileExtension = L".mp3 repeat";
 	const wstring basePath = L"play video\\";
 
 	cout << " «∑Òø™∆Ù±≥æ∞“Ù¿÷" << endl << "1. « 2.∑Ò" << endl;
