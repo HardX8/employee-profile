@@ -28,7 +28,7 @@ string English::menu() const
 	cout << "|                                  |" << endl;
 	cout << "|     1. Query Employee Profiles   |" << endl;
 	cout << "|     2. Add Employee Profile      |" << endl;
-	cout << "|     3. Modify Employee Profile   |" << endl;
+	cout << "|     3. Update Employee Profile   |" << endl;
 	cout << "|     4. Delete Employee Profile   |" << endl;
 	cout << "|     ESC. Logout                  |" << endl;
 	cout << "|                                  |" << endl;
@@ -63,7 +63,7 @@ string English::tableTitle() const
 
 English::English()
 {
-	welcomeLogin = "  Welcome to the Employee Profile Management System   ";
+	welcomeLogin = "  Welcome to Login the Employee Profile Management System   ";
 	welcomeRegister = "  Welcome to Register in the Employee Profile Management System   ";
 	forgetPassword = "  Forgot Password   ";
 	isExit = "Exit?";

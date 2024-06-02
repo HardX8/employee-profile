@@ -20,6 +20,7 @@
 #include <memory>
 
 
+
 #pragma comment(lib, "Winmm.lib")
 
 using namespace std;
@@ -46,6 +47,7 @@ shared_ptr<Language> language;
 bool login();
 void myRegister();
 void forgetPassword();
+void selectMusic();
 void menu();
 void displayAllProfile();
 void insertEmployeeProfile();
@@ -60,6 +62,7 @@ vector<EmployeeProfile> loadEmployeeProfiles(const string& filename);
 EmployeeProfile createProfileFromLine(const std::string& line);
 void fullScreen();
 void closeBlackWindow();
+void videoPath(wstring basePath);
 void tableTitle();
 
 // 是否选择过语言
@@ -71,17 +74,25 @@ int main() {
 			while (1) {
 				cout << "请选择语言\tPlease select language" << endl
 					<< "1.中文\t\t1.Chinese" << endl
-					<< "2.英文\t\t2.English";
+					<< "2.英文\t\t2.English" << endl;
 				int language =_getch();
 				if (language == '1') {
 					std::system("cls");
 					selectLanguage = true;
+					// 是否开启背景音乐
+					selectMusic();
+					std::system("cls");
+					videoPath(L"video\\welcome");
 					break;
 				}
 				else if (language == '2') {
 					std::system("cls");
-					resultString += EnString;
+					resultString = EnString;
 					selectLanguage = true;
+					// 是否开启背景音乐
+					selectMusic();
+					std::system("cls");
+					videoPath(L"video\\welcome");
 					break;
 				}
 				else {
@@ -100,6 +111,7 @@ int main() {
 
 		// 设置黑窗口标题
 		SetConsoleTitleA("职工档案管理系统-XZH");
+
 		// 设置黑窗口和字体颜色
 		system("color f0");
 		// 显示日期
@@ -107,13 +119,15 @@ int main() {
 		// 显示时间
 		system("TIME /T");
 
+
 		cout << language->loginAndRegisterPage() << endl;
 
-		//PlaySound(TEXT("test1.wav"), NULL, SND_FILENAME);
+
+
 		// 播放wav文件
 		//PlaySound(TEXT("video\\test1.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 		// 播放mp3文件
-		mciSendString(TEXT("play video\\test2.mp3"), NULL, 0, NULL);
+		//mciSendString(TEXT("play video\\test2.mp3"), NULL, 0, NULL);
 
 		char first;
 
@@ -144,9 +158,11 @@ int main() {
 			cout << language->isExit << endl << language->yesOrNo;
 			if (_getch() == '1') {
 				cout << language->exitSuccess << endl;
+				videoPath(L"video\\bye");
 				closeBlackWindow();
 				// 用return 0 的话在meun()中调用main()之后还会再执行meun()
-				// 现在执行了关闭窗口函数，此处也可以忽略了
+				// 虽然执行了关闭窗口函数，但是如果用户此时鼠标正在移动窗口
+				// 则不会直接关闭窗口
 				exit(0);
 			}
 			std::system("cls");
@@ -181,6 +197,7 @@ bool login() {
 		if (user.isPasswordValid(filename)) {
 			std::system("cls");
 			cout << language->loginSuccess << endl;
+			videoPath(L"video\\login");
 			return true;
 		}
 		else {
@@ -248,6 +265,35 @@ void myRegister() {
 	user.saveUserToFile(filename);
 
 	cout << language->registerSuccess << endl;
+
+	videoPath(L"video\\register");
+}
+
+// 选择音乐
+void selectMusic() {
+	const wstring fileExtension = L".mp3";
+	const wstring basePath = L"play video\\";
+
+	cout << "是否开启背景音乐" << endl << "1.是 2.否" << endl;
+	int key = _getch();
+	// 不开启背景音乐
+	if (key == '2') {
+		return;
+	}
+
+	int i;
+	// 设置随机数生成器的种子
+	srand(time(0)); 
+	while (1) {
+		i = rand() % 10;
+		if (i <= 5) {
+			break;
+		}
+	}
+
+	// 拼接字符串
+	wstring filePath = basePath + to_wstring(i) + fileExtension;
+	mciSendString(filePath.c_str(), NULL, 0, NULL);
 }
 
 // 忘记密码
@@ -291,6 +337,7 @@ void forgetPassword() {
 		}
 		cout << language->codeError;
 	}
+	videoPath(L"video\\password");
 }
 
 // 功能菜单
@@ -695,6 +742,19 @@ void closeBlackWindow() {
 	keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
 	// 释放F4键
 	keybd_event(VK_F4, 0, KEYEVENTF_KEYUP, 0);
+}
+
+// 播放不同语言的音频
+void videoPath(wstring basePath) {
+	const wstring fileExtension = L".wav";
+
+	// 拼接字符串
+	wstring filePath = basePath 
+		+ wstring(resultString.begin(), resultString.end()) 
+		+ fileExtension;
+
+	// 播放音频
+	PlaySound(filePath.c_str(), NULL, SND_FILENAME | SND_ASYNC);
 }
 
 // 打印表头
