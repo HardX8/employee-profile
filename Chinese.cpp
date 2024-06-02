@@ -107,6 +107,8 @@ Chinese::Chinese()
 
 	pressEnter = "按回车键重新发送";
 
+	KEY_ERROR = "请按正确的按键！";
+
 	// -----------------------User------------------------
 
 	canCreateTemp = "无法创建临时文件！";

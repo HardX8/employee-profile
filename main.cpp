@@ -75,8 +75,8 @@ int main() {
 				cout << "请选择语言\tPlease select language" << endl
 					<< "1.中文\t\t1.Chinese" << endl
 					<< "2.英文\t\t2.English" << endl;
-				int language =_getch();
-				if (language == '1') {
+				int languageChoice =_getch();
+				if (languageChoice == '1') {
 					std::system("cls");
 					selectLanguage = true;
 					// 是否开启背景音乐
@@ -85,7 +85,7 @@ int main() {
 					videoPath(L"video\\welcome");
 					break;
 				}
-				else if (language == '2') {
+				else if (languageChoice == '2') {
 					std::system("cls");
 					resultString = EnString;
 					selectLanguage = true;
@@ -95,8 +95,10 @@ int main() {
 					videoPath(L"video\\welcome");
 					break;
 				}
-				else {
-					cout << KEY_ERROR;
+				else {	
+					std::system("cls");
+					cout << KEY_ERROR << endl;
+					cout << KEY_ERROR_ENG << endl << endl;
 				}
 			}
 		}
@@ -121,13 +123,6 @@ int main() {
 
 
 		cout << language->loginAndRegisterPage() << endl;
-
-
-
-		// 播放wav文件
-		//PlaySound(TEXT("video\\test1.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-		// 播放mp3文件
-		//mciSendString(TEXT("play video\\test2.mp3"), NULL, 0, NULL);
 
 		char first;
 
@@ -169,7 +164,7 @@ int main() {
 			break;
 		default:
 			system("cls");
-			cout << KEY_ERROR << endl;
+			cout << language->KEY_ERROR << endl;
 		}
 
 	}
@@ -377,7 +372,7 @@ void menu() {
 			break;
 		default:
 		std:system("cls");
-			cout << KEY_ERROR << endl;
+			cout << language->KEY_ERROR << endl;
 			break;
 		}
 	}
@@ -533,7 +528,7 @@ void displayAllProfile() {
 		default:
 			std::system("cls");
 			//cout << i;
-			cout << KEY_ERROR << endl;
+			cout << language->KEY_ERROR << endl;
 		}
 	}
 	// 重置为第一页

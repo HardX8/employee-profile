@@ -55,6 +55,8 @@ public:
     string canNotOpen;
 
     string pressEnter;
+
+    string KEY_ERROR;
     
     // -----------------------User------------------------
 

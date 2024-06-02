@@ -108,6 +108,8 @@ English::English()
 
 	pressEnter = "Press Enter to resend";
 
+	KEY_ERROR = "Please press the correct KEY!";
+
 	// -----------------------User------------------------
 
 	canCreateTemp = "Cannot create temporary file!";
