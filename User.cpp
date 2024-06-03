@@ -54,8 +54,6 @@ void User::updateUserByI(const string& filename, const string& phone, int i)
             outFile << line << endl;
         }
         else {
-            // 此处进行break的话会导致要删除职工后面的用户没有写入新文件
-
             // 使用vector来动态存储分割后的字符串
             vector<string> userVector;
             stringstream ss(line);

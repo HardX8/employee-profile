@@ -173,7 +173,6 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
         else {
             // 找到了匹配的工号
             found = true;
-            // 此处进行break的话会导致要删除职工后面的职工没有写入新文件
             
             // 使用vector来动态存储分割后的字符串
             vector<string> employeeVector;
