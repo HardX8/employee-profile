@@ -36,7 +36,7 @@ shared_ptr<Language> createLanguage(const string& lang) {
     }
 }
 // shared_ptr允许多个对象共享同一个资源的所有权，
-// 当最后一个指向该资源的shared_ptr销毁时，资源会被自动释放。
+// 当最后一个指向该资源的shared_ptr销毁时，资源会被自动释放
 shared_ptr<Language> language;
 
 /**
@@ -318,7 +318,7 @@ void forgetPassword() {
 		// 记录结束时间
 		endTime = chrono::high_resolution_clock::now();
 
-		if (chrono::duration_cast<chrono::seconds>(endTime - startTime).count() > 60) {
+		if (chrono::duration_cast<chrono::seconds>(endTime - startTime).count() > 3) {
 			cout << language->overtime << endl << language->pressEnter << endl;
 			int i = _getch();
 			if (i == 13) {
@@ -329,11 +329,11 @@ void forgetPassword() {
 
 		if (VerificationCode == code) {
 			User::updateUserByPhone(USER_FILENAME, phone);
+			videoPath(L"video\\password");
 			break;	
 		}
 		cout << language->codeError;
 	}
-	videoPath(L"video\\password");
 }
 
 // 功能菜单

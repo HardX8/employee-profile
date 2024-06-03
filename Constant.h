@@ -17,7 +17,7 @@ const int PAGE_SIZE = 6;
 static int pageNum = 1;
 static int pageSize = 6;
 
-// 序号位该属性在一行中的位置，从 1 开始
+// 序号为该属性在一行中的位置，从 1 开始
 // 职工 id 的序号
 static int EMPLOYEE_ID_SERIAL_NUMBER = 1;
 // 职工 phone 的序号
