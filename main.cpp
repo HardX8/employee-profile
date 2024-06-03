@@ -19,8 +19,6 @@
 #include "English.h"
 #include <memory>
 
-
-
 #pragma comment(lib, "Winmm.lib")
 
 using namespace std;
@@ -79,8 +77,12 @@ int main() {
 				if (languageChoice == '1') {
 					std::system("cls");
 					selectLanguage = true;
+
+					// 选择语言对象
+					language = createLanguage(resultString);
 					// 是否开启背景音乐
 					selectMusic();
+
 					std::system("cls");
 					videoPath(L"video\\welcome");
 					break;
@@ -89,8 +91,12 @@ int main() {
 					std::system("cls");
 					resultString = EnString;
 					selectLanguage = true;
+
+					// 选择语言对象
+					language = createLanguage(resultString);
 					// 是否开启背景音乐
 					selectMusic();
+
 					std::system("cls");
 					videoPath(L"video\\welcome");
 					break;
@@ -103,13 +109,10 @@ int main() {
 			}
 		}
 
-		// 选择语言对象
-		language = createLanguage(resultString);
 		// 将语言对象传递给User
 		User user(language);
 		// 将语言对象传递给Employee
 		EmployeeProfile employee(language);
-
 
 		// 设置黑窗口标题
 		SetConsoleTitleA("职工档案管理系统-XZH");
@@ -121,11 +124,9 @@ int main() {
 		// 显示时间
 		system("TIME /T");
 
-
 		cout << language->loginAndRegisterPage() << endl;
 
 		char first;
-
 		first = _getch();
 		switch (first) {
 		case '1':
@@ -269,7 +270,7 @@ void selectMusic() {
 	const wstring fileExtension = L".mp3 repeat";
 	const wstring basePath = L"play video\\";
 
-	cout << "是否开启背景音乐" << endl << "1.是 2.否" << endl;
+	cout << language->music << endl << language->yesOrNo2 << endl;
 	int key = _getch();
 	// 不开启背景音乐
 	if (key == '2') {
@@ -281,7 +282,7 @@ void selectMusic() {
 	srand(time(0)); 
 	while (1) {
 		i = rand() % 10;
-		if (i <= 5) {
+		if (i <= 5 && i > 0) {
 			break;
 		}
 	}

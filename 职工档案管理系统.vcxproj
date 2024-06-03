@@ -141,7 +141,11 @@
     <ClInclude Include="English.h" />
     <ClInclude Include="Language.h" />
     <ClInclude Include="MD5.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="User.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

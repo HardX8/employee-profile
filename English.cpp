@@ -69,7 +69,7 @@ English::English()
 	isExit = "Exit?";
 	yesOrNo = "1. Yes 2. No";
 	selectFunction = "\t    1. Ascending by Employee ID 2. Descending by Employee ID 3. Ascending by Age 4. Descending by Age"
-		"5. Ascending by Hire Date 6. Descending by Hire Date 7. Go to Page 8. Change Items Per Page 9. Fuzzy Query Press \t\tESC to Exit";
+		"5. Ascending by Hire Date \n\t    6. Descending by Hire Date 7. Go to Page 8. Change Items Per Page 9. Fuzzy Query  \t\tESC to Exit";
 	currentPage = "\nCurrent Page: ";
 	page = "/Page";
 	leftOrRight = "\tLeft: A/¡û\tRight: D/¡ú";
@@ -79,6 +79,8 @@ English::English()
 	selectTime = "Current Query Time: ";
 	close = "Window will close in 3 seconds.";
 	userName = "Username: ";
+	music = "Whether to enable background music?";
+	yesOrNo2 = "1.YES 2.NO";
 
 	exitSuccess = "\nExit successful!";
 	loginSuccess = "Login successful";

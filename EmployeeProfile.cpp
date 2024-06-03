@@ -204,6 +204,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                     cin.unget(); 
                     // 进行输入操作
                     cin >> newE; 
+                    // 对身份证号进行校验
                     if (j == EMPLOYEE_ID_NUMBER_SERIAL_NUMBER - 1) {
                         while (1) {
                             // 如果格式有误则重新输入
@@ -222,6 +223,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                             }
                         }
                     }
+                    // 对手机号进行校验
                     if (j == EMPLOYEE_PHONE_SERIAL_NUMBER - 1) {
                         while (1) {
                             // 如果格式有误则重新输入
@@ -230,7 +232,7 @@ void EmployeeProfile::updateProfileByI(const string& filename, int i)
                                 cin >> newE;
                                 continue;
                             }
-                            // 身份证号已存在
+                            // 手机号号已存在
                             if (EmployeeProfile::isPropertyExists(newE, EMPLOYEE_FILENAME, EMPLOYEE_PHONE_SERIAL_NUMBER)) {
                                 cout << employeeLanguage->employeePhoneAlreadyExist;
                                 cin >> newE;

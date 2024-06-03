@@ -27,6 +27,8 @@ public:
     string selectTime;
     string close;
     string userName;
+    string music;
+    string yesOrNo2;
 
     string exitSuccess;
     string loginSuccess;

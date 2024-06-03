@@ -78,6 +78,8 @@ Chinese::Chinese()
 	selectTime = "本次查询时间：";
 	close = "3秒后关闭窗口.";
 	userName = "用户名：";
+	music = "是否开启背景音乐？";
+	yesOrNo2 = "1.是 2.否";
 
 	exitSuccess = "\n退出成功！";
 	loginSuccess = "登陆成功";
