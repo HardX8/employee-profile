@@ -4,7 +4,9 @@
 #include <iomanip>
 
 using namespace std;
-
+/**
+ * @author XZH
+ */
 string English::loginAndRegisterPage() const {
 	cout << "Welcome to use the employee file management system" << endl;
 	cout << "   *************************************" << endl;

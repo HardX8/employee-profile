@@ -3,7 +3,9 @@
 
 
 using namespace std;
-
+/**
+ * @author XZH
+ */
 class Chinese : public Language
 {
 public:

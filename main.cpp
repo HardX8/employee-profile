@@ -23,6 +23,9 @@
 
 using namespace std;
 
+/**
+ * @author XZH
+ */
 string EnString = "_ENGLISH";
 string resultString = "";
 
@@ -39,9 +42,6 @@ shared_ptr<Language> createLanguage(const string& lang) {
 // 当最后一个指向该资源的shared_ptr销毁时，资源会被自动释放
 shared_ptr<Language> language;
 
-/**
- * @author XZH
- */
 bool login();
 void myRegister();
 void forgetPassword();

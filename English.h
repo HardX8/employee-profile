@@ -3,7 +3,9 @@
 #include <string>
 
 using namespace std;
-
+/**
+ * @author XZH
+ */
 class English : public Language
 {
 public:

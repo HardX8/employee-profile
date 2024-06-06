@@ -4,7 +4,9 @@
 #include <iomanip>
 
 using namespace std;
-
+/**
+ * @author XZH
+ */
 string Chinese::loginAndRegisterPage() const {
 	cout << "    欢迎使用职工档案管理系统     " << endl;
 	cout << "********************************" << endl;

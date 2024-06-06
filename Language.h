@@ -2,7 +2,9 @@
 #include <string>
 
 using namespace std;
-
+/**
+ * @author XZH
+ */
 class Language
 {
 public:
